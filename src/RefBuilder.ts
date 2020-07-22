@@ -1,6 +1,6 @@
 import { Observable, of, forkJoin, Subject } from "rxjs";
 import { switchMap, takeUntil, take, catchError } from "rxjs/operators";
-import { IRef, IRefs } from "tornado-types";
+import { IRef, IRefs } from "@djonnyx/tornado-types";
 import { IDataService } from "./IDataService";
 
 export class RefBuilder {

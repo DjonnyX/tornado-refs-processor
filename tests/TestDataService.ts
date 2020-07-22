@@ -1,5 +1,5 @@
 import { Observable, of } from "rxjs";
-import { IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset } from "tornado-types";
+import { IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset } from "@djonnyx/tornado-types";
 
 export const REFS_INFO_DATA: Array<IRef> = [
     {

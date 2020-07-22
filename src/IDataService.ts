@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { IRef, INode, ISelector, IProduct, ITag, IAsset } from "tornado-types";
+import { IRef, INode, ISelector, IProduct, ITag, IAsset } from "@djonnyx/tornado-types";
 
 export interface IDataService {
     getRefs(): Observable<Array<IRef>>;
