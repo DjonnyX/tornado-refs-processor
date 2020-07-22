@@ -114,7 +114,7 @@ export const ASSETS_DATA: Array<IAsset> = [
     {
         id: "a1",
         name: "asset_1.png",
-        lastupdate: Date.now().toString(),
+        lastupdate: Date.now(),
         ext: ".png",
         path: "assets/a1",
         mipmap: {
@@ -125,7 +125,7 @@ export const ASSETS_DATA: Array<IAsset> = [
     {
         id: "a2",
         name: "asset_2.png",
-        lastupdate: Date.now().toString(),
+        lastupdate: Date.now(),
         ext: ".png",
         path: "assets/a2",
         mipmap: {
@@ -136,7 +136,7 @@ export const ASSETS_DATA: Array<IAsset> = [
     {
         id: "a3",
         name: "asset_3.png",
-        lastupdate: Date.now().toString(),
+        lastupdate: Date.now(),
         ext: ".png",
         path: "assets/a3",
         mipmap: {
