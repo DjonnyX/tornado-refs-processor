@@ -1,4 +1,4 @@
-import { INode, IAsset, ISelector, IProduct, ITag, IMenu, IRefs, NodeTypes, IMenuNode, IMenuProduct, IMenuSelector, IMenuTag } from "tornado-types";
+import { INode, IAsset, ISelector, IProduct, ITag, IMenu, IRefs, NodeTypes, IMenuNode, IMenuProduct, IMenuSelector, IMenuTag } from "@djonnyx/tornado-types";
 
 export class MenuBuilder {
     private _rootNode: INode;

@@ -1,16 +1,26 @@
 {
-  "name": "tornado-refs-processor",
+  "name": "@djonnyx/tornado-refs-processor",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "mocha -r ts-node/register tests/**/*.spec.ts"
+    "test": "mocha -r ts-node/register tests/**/*.spec.ts",
+    "build": "tsc",
+    "deploy": "npm publish"
   },
   "author": {
     "name": "Eugene Grebennikov",
     "email": "djonnyx@gmail.com"
   },
   "license": "commerce",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/djonnyx/tornado-types"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^8.0.0",
