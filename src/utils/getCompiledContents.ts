@@ -1,4 +1,4 @@
-import { deepMergeObjects } from "./object";
+import { deepMergeObjects, deepClone } from "./object";
 import { normalizeEntityContents } from "./entity";
 import { IAsset, ILanguage } from "@djonnyx/tornado-types";
 
@@ -6,7 +6,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
     const result = {};
     for (const lang in contents) {
         // переопределение контента для разных языков
-        result[lang] = lang === defaultLanguage.code ? {...contents[lang]} : deepMergeObjects(contents[defaultLanguage.code], contents[lang]);
+        result[lang] = lang === defaultLanguage.code ? deepClone(contents[lang]) : deepMergeObjects(contents[defaultLanguage.code], contents[lang]);
     }
 
     // добовление контента языков которых нет в базе
@@ -15,7 +15,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
             continue;
         }
 
-        result[lang.code] = {...contents[defaultLanguage.code]};
+        result[lang.code] = deepClone(result[defaultLanguage.code]);
     }
 
     normalizeEntityContents(result, defaultLanguage.code);
@@ -46,7 +46,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
 
         // нормализация ресурсов
         if (!!result[lang].resources) {
-            const normalizedResources = {...result[lang].resources};
+            const normalizedResources = { ...result[lang].resources };
             for (const resourceType in result[lang].resources) {
                 if (assetsDictionary[result[lang].resources[resourceType]]) {
                     normalizedResources[resourceType] = assetsDictionary[result[lang].resources[resourceType]];

@@ -86,7 +86,7 @@ export const LANGUAGES_DATA: Array<ILanguage> = [
     {
         id: "l2",
         active: true,
-        isDefault: true,
+        isDefault: false,
         code: "ENG",
         name: "English",
         assets: ["a1"],

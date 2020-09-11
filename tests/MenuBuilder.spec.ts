@@ -6,8 +6,6 @@ import { IAsset, ICompiledMenu, SelectorTypes, NodeTypes } from '@djonnyx/tornad
 import { TestDataService, CURRENCIES_DATA, ASSETS_DATA, LANGUAGES_DATA } from "./TestDataService";
 import { DataCombiner } from "../src/DataCombiner";
 
-const currentTestDate = new Date("2020-09-11T11:18:11.284Z");
-
 const COMPILED_MENU: ICompiledMenu = {
     "id": "n1",
     "active": true,
