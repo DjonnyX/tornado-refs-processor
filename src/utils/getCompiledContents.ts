@@ -6,7 +6,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
     const result = {};
     for (const lang in contents) {
         // переопределение контента для разных языков
-        result[lang] = lang === defaultLanguage.code ? contents[lang] : deepMergeObjects(contents[this._defaultLanguage.code], contents[lang]);
+        result[lang] = lang === defaultLanguage.code ? {...contents[lang]} : deepMergeObjects(contents[this._defaultLanguage.code], contents[lang]);
     }
 
     // добовление контента языков которых нет в базе
@@ -15,7 +15,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
             continue;
         }
 
-        result[lang.code] = contents[defaultLanguage.code];
+        result[lang.code] = {...contents[defaultLanguage.code]};
     }
 
     normalizeEntityContents(result, defaultLanguage.code);
@@ -36,17 +36,17 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
         // нормализация галереи ресурсов
         if (!!result[lang].gallery) {
             const normalizedGallery = new Array<IAsset>();
-            for (const assetId of result[lang].assets) {
+            for (const assetId of result[lang].gallery) {
                 if (assetsDictionary[assetId]) {
                     normalizedGallery.push(assetsDictionary[assetId]);
                 }
             }
-            result[lang].assets = normalizedGallery;
+            result[lang].gallery = normalizedGallery;
         }
 
         // нормализация ресурсов
         if (!!result[lang].resources) {
-            const normalizedResources = new Array<IAsset>();
+            const normalizedResources = {...result[lang].resources};
             for (const resourceType in result[lang].resources) {
                 if (assetsDictionary[result[lang].resources[resourceType]]) {
                     normalizedResources[resourceType] = assetsDictionary[result[lang].resources[resourceType]];

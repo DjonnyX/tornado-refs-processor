@@ -1,11 +1,12 @@
 import { expect } from 'chai';
 import * as fs from "fs";
-import { TestDataService, NODES_DATA, SELECTORS_DATA, PRODUCTS_DATA, TAGS_DATA, ASSETS_DATA, LANGUAGES_DATA, TRANSLATIONS_DATA, STORES_DATA, TERMINALS_DATA, BUSINESS_PERIODS_DATA, ORDER_TYPES_DATA, CURRENCIES_DATA, ADS_DATA } from "./TestDataService";
+import {
+    TestDataService, NODES_DATA, SELECTORS_DATA, PRODUCTS_DATA, TAGS_DATA, ASSETS_DATA, LANGUAGES_DATA,
+    TRANSLATIONS_DATA, STORES_DATA, TERMINALS_DATA, BUSINESS_PERIODS_DATA, ORDER_TYPES_DATA, CURRENCIES_DATA,
+    ADS_DATA
+} from "./TestDataService";
 import { RefBuilder } from "../src/RefBuilder";
-import { DataCombiner } from "../src/DataCombiner";
 import { take } from 'rxjs/operators';
-import { IAsset } from '@djonnyx/tornado-types';
-import { of } from 'rxjs';
 
 describe('RefBuilder', () => {
     it('should return valid refs', async () => {
@@ -42,38 +43,5 @@ describe('RefBuilder', () => {
             currencies: CURRENCIES_DATA,
             ads: ADS_DATA,
         }));
-    });
-});
-
-describe('DataCombiner', () => {
-    it('should return valid refs', async () => {
-        const data = await new Promise((resolve, reject) => {
-            const service = new TestDataService();
-            const dataCombiner = new DataCombiner({
-                assetsTransformer: (assets: Array<IAsset>) => {
-                    return of(assets);
-                },
-                dataService: service,
-                updateTimeout: 99999999,
-            });
-
-            dataCombiner.onChange.pipe(
-                take(1),
-            ).subscribe(
-                data => {
-
-                    fs.writeFileSync("output/compiledData.json", JSON.stringify(data));
-
-                    resolve(data);
-                },
-                err => {
-                    reject(err);
-                }
-            );
-
-            dataCombiner.init();
-        });
-
-        expect(data).to.equal(data);
     });
 });

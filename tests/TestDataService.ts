@@ -1,73 +1,73 @@
 import { Observable, of } from "rxjs";
 import { IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes, ITranslation, IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, AdTypes, TerminalStatusTypes, TerminalTypes, RefTypes } from "@djonnyx/tornado-types";
 
-const currentDate = new Date(Date.now());
+const currentTestDate = new Date("2020-09-11T11:18:11.284Z");
 
 export const REFS_INFO_DATA: Array<IRef> = [
     {
         name: RefTypes.NODES,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.PRODUCTS,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.SELECTORS,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.TAGS,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.ASSETS,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.STORES,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.TERMINALS,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.BUSINESS_PERIODS,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.CURRENCIES,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.ORDER_TYPES,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.LANGUAGES,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.TRANSLATIONS,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
     {
         name: RefTypes.ADS,
         version: 1,
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
     },
 ];
 
@@ -92,7 +92,7 @@ export const NODES_DATA: Array<INode> = [
         type: NodeTypes.KIOSK_ROOT,
         parentId: null,
         contentId: null,
-        children: [""],
+        children: ["n2"],
         scenarios: [],
         extra: { key: "value" },
     },
@@ -277,7 +277,7 @@ export const ASSETS_DATA: Array<IAsset> = [
         id: "a1",
         active: true,
         name: "asset_1.png",
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
         ext: ".png",
         path: "assets/a1",
         mipmap: {
@@ -289,7 +289,7 @@ export const ASSETS_DATA: Array<IAsset> = [
         id: "a2",
         active: true,
         name: "asset_2.png",
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
         ext: ".png",
         path: "assets/a2.png",
         mipmap: {
@@ -301,7 +301,7 @@ export const ASSETS_DATA: Array<IAsset> = [
         id: "a3",
         active: true,
         name: "asset_3.png",
-        lastupdate: currentDate,
+        lastupdate: currentTestDate,
         ext: ".png",
         path: "assets/a3.png",
         mipmap: {

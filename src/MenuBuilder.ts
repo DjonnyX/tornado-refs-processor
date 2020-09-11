@@ -15,7 +15,7 @@ export class MenuBuilder {
     private _selectorsDictionary: { [id: string]: ISelector };
     private _productsDictionary: { [id: string]: IProduct };
     private _tagsDictionary: { [id: string]: ITag };
-    private _currenciesDictionary: { [currencyCode: string]: ICurrency };
+    private _currenciesDictionary: { [id: string]: ICurrency };
     private _businessPeriodsDictionary: { [id: string]: IBusinessPeriod };
     private _orderTypesDictionary: { [id: string]: IOrderType };
     private _storesDictionary: { [id: string]: IStore };
@@ -90,6 +90,10 @@ export class MenuBuilder {
             throw Error("terminals ref in not defined.");
         }
 
+        refs.assets.forEach(asset => {
+            this._assetsDictionary[asset.id] = asset;
+        });
+
         let firstLanguage: ILanguage;
         refs.languages.forEach(language => {
             if (language.active) {
@@ -123,29 +127,8 @@ export class MenuBuilder {
         });
 
         if (!this._rootNode) {
-            // err
-            return;
+            throw Error("root node in not defined.");
         }
-
-        refs.assets.forEach(asset => {
-            this._assetsDictionary[asset.id] = asset;
-        });
-
-        refs.selectors.forEach(selector => {
-            if (selector.active) {
-                this._selectorsDictionary[selector.id] = selector;
-                this._compiledSelectorsDictionary[selector.id] = this.getCompiledSelector(selector.id);
-                this._compiledSelectors.push(this._compiledSelectorsDictionary[selector.id]);
-            }
-        });
-
-        refs.products.forEach(product => {
-            if (product.active) {
-                this._productsDictionary[product.id] = product;
-                this._compiledProductsDictionary[product.id] = this.getCompiledProduct(product.id);
-                this._compiledProducts.push(this._compiledProductsDictionary[product.id]);
-            }
-        });
 
         refs.tags.forEach(tag => {
             if (tag.active) {
@@ -156,7 +139,7 @@ export class MenuBuilder {
 
         refs.currencies.forEach(currency => {
             if (currency.active) {
-                this._currenciesDictionary[currency.code] = currency;
+                this._currenciesDictionary[currency.id] = currency;
             }
         });
 
@@ -178,6 +161,22 @@ export class MenuBuilder {
 
         refs.terminals.forEach(terminal => {
             this._terminalsDictionary[terminal.id] = terminal;
+        });
+
+        refs.selectors.forEach(selector => {
+            if (selector.active) {
+                this._selectorsDictionary[selector.id] = selector;
+                this._compiledSelectorsDictionary[selector.id] = this.getCompiledSelector(selector.id);
+                this._compiledSelectors.push(this._compiledSelectorsDictionary[selector.id]);
+            }
+        });
+
+        refs.products.forEach(product => {
+            if (product.active) {
+                this._productsDictionary[product.id] = product;
+                this._compiledProductsDictionary[product.id] = this.getCompiledProduct(product.id);
+                this._compiledProducts.push(this._compiledProductsDictionary[product.id]);
+            }
         });
 
         this._menu = this.buildMenuTree();
