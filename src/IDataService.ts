@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import { IRef, INode, ISelector, IProduct, ITag, IAsset } from "@djonnyx/tornado-types";
+import { IRef, INode, ISelector, IProduct, ITag, IAsset, ILanguage, ITerminal, IStore, IAd, ITranslation, ICurrency, IOrderType, IBusinessPeriod } from "@djonnyx/tornado-types";
 
 export interface IDataService {
     getRefs(): Observable<Array<IRef>>;
@@ -13,4 +13,20 @@ export interface IDataService {
     getTags(): Observable<Array<ITag>>;
 
     getAssets(): Observable<Array<IAsset>>;
+
+    getLanguages(): Observable<Array<ILanguage>>;
+
+    getTranslations(): Observable<Array<ITranslation>>;
+
+    getBusinessPeriods(): Observable<Array<IBusinessPeriod>>;
+
+    getOrderTypes(): Observable<Array<IOrderType>>;
+
+    getCurrencies(): Observable<Array<ICurrency>>;
+
+    getAds(): Observable<Array<IAd>>;
+
+    getStores(): Observable<Array<IStore>>;
+
+    getTerminals(): Observable<Array<ITerminal>>;
 }

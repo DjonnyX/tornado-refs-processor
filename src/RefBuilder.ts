@@ -9,17 +9,25 @@ export class RefBuilder {
     private _refsInfoDictionary: { [refName: string]: IRef } = {};
 
     private _refs: IRefs = {
+        languages: null,
+        translations: null,
         nodes: null,
         selectors: null,
         products: null,
         tags: null,
         assets: null,
+        stores: null,
+        terminals: null,
+        businessPeriods: null,
+        orderTypes: null,
+        currencies: null,
+        ads: null,
     };
 
     private _onChange = new Subject<IRefs>();
     public onChange = this._onChange.asObservable();
 
-    constructor(private _service: IDataService) {}
+    constructor(private _service: IDataService) { }
 
     dispose(): void {
         this.unsubscribe$.next();
@@ -41,6 +49,24 @@ export class RefBuilder {
         });
     }
 
+    private normalizedRequestName(requestName: string): string {
+        let result = "";
+        const pattern = /([A-Z])/g;
+
+        if (pattern.test(requestName)) {
+            for (const char of requestName) {
+                console.log(char)
+                if (pattern.test(char)) {
+                    result += `-${char.toLowerCase()}`;
+                } else {
+                    result += char;
+                }
+            }
+        }
+
+        return result;
+    }
+
     private checkForUpdateRefs(refsInfo: Array<IRef>): void {
         if (!refsInfo) {
             this._onChange.next(null);
@@ -50,7 +76,7 @@ export class RefBuilder {
         let sequenceList = new Array<Observable<boolean>>();
 
         refsInfo.forEach(refInfo => {
-            if (/^(nodes|products|selectors|tags|assets)$/.test(refInfo.name)) {
+            if (/^(languages|nodes|products|selectors|tags|assets|stores|terminals|bisinessPeriods|orderTypes|currencies|ads)$/.test(refInfo.name)) {
 
                 if (!this._refsInfoDictionary[refInfo.name] || this._refsInfoDictionary[refInfo.name].version !== refInfo.version) {
                     const res = this.updateRefByName(refInfo.name);
@@ -115,6 +141,22 @@ export class RefBuilder {
                 return this._service.getTags();
             case "assets":
                 return this._service.getAssets();
+            case "languages":
+                return this._service.getLanguages();
+            case "businessPeriods":
+                return this._service.getBusinessPeriods();
+            case "orderTypes":
+                return this._service.getOrderTypes();
+            case "currencies":
+                return this._service.getCurrencies();
+            case "translations":
+                return this._service.getTranslations();
+            case "ads":
+                return this._service.getAds();
+            case "stores":
+                return this._service.getStores();
+            case "terminals":
+                return this._service.getTerminals();
         }
 
         return null;

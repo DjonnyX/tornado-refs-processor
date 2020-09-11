@@ -1,20 +1,45 @@
-import { INode, IAsset, ISelector, IProduct, ITag, IMenu, IRefs, NodeTypes, IMenuNode, IMenuProduct, IMenuSelector, IMenuTag } from "@djonnyx/tornado-types";
+import { INode, IAsset, ISelector, IProduct, ITag, IRefs, NodeTypes, ICurrency, ITranslation, ILanguage, IBusinessPeriod, IOrderType, IStore, ITerminal, ICompiledMenu, ICompiledMenuNode, ICompiledSelector, ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents } from "@djonnyx/tornado-types";
+import { getCompiledContents } from "./utils/getCompiledContents";
+import { ICompiledEntityContents } from "@djonnyx/tornado-types/dist/interfaces/ICompiledEntityContents";
 
 export class MenuBuilder {
     private _rootNode: INode;
+    private _languagesDictionary: { [languageCode: string]: ILanguage };
+    private _translationsDictionary: { [languageCode: string]: ITranslation };
     private _assetsDictionary: { [id: string]: IAsset };
     private _nodesDictionary: { [id: string]: INode };
     private _selectorsDictionary: { [id: string]: ISelector };
     private _productsDictionary: { [id: string]: IProduct };
     private _tagsDictionary: { [id: string]: ITag };
+    private _currenciesDictionary: { [currencyCode: string]: ICurrency };
+    private _businessPeriodsDictionary: { [id: string]: IBusinessPeriod };
+    private _orderTypesDictionary: { [id: string]: IOrderType };
+    private _storesDictionary: { [id: string]: IStore };
+    private _terminalsDictionary: { [id: string]: ITerminal };
+    private _defaultLanguage: ILanguage;
+    private _refs: IRefs;
 
-    private _menu: IMenu;
-    get menu(): IMenu { return this._menu; }
+    // compiled
+    private _compiledSelectors: Array<ICompiledSelector>;
+    private _compiledProducts: Array<ICompiledProduct>;
+    private _compiledSelectorsDictionary: { [id: string]: ICompiledSelector };
+    private _compiledProductsDictionary: { [id: string]: ICompiledProduct };
+    private _compiledTagsDictionary: { [id: string]: ICompiledTag };
+
+    private _menu: ICompiledMenu;
+    get menu(): ICompiledMenu { return this._menu; }
 
     build(refs: IRefs): void {
         this.reset();
 
+        this._refs = refs;
+
         if (!refs) {
+            // err
+            return;
+        }
+
+        if (!refs.languages) {
             // err
             return;
         }
@@ -61,44 +86,111 @@ export class MenuBuilder {
         });
 
         refs.selectors.forEach(selector => {
-            this._selectorsDictionary[selector.id] = selector;
+            if (selector.active) {
+                this._selectorsDictionary[selector.id] = selector;
+                this._compiledSelectorsDictionary[selector.id] = this.getCompiledSelector(selector.id);
+                this._compiledSelectors.push(this._compiledSelectorsDictionary[selector.id]);
+            }
         });
 
         refs.products.forEach(product => {
-            this._productsDictionary[product.id] = product;
+            if (product.active) {
+                this._productsDictionary[product.id] = product;
+                this._compiledProductsDictionary[product.id] = this.getCompiledProduct(product.id);
+                this._compiledProducts.push(this._compiledProductsDictionary[product.id]);
+            }
         });
 
         refs.tags.forEach(tag => {
-            this._tagsDictionary[tag.id] = tag;
+            if (tag.active) {
+                this._tagsDictionary[tag.id] = tag;
+                this._compiledTagsDictionary[tag.id] = this.getCompiledTag(tag.id);
+            }
+        });
+
+        refs.currencies.forEach(currency => {
+            if (currency.active) {
+                this._currenciesDictionary[currency.code] = currency;
+            }
+        });
+
+        refs.businessPeriods.forEach(businessPeriod => {
+            if (businessPeriod.active) {
+                this._businessPeriodsDictionary[businessPeriod.id] = businessPeriod;
+            }
+        });
+
+        refs.orderTypes.forEach(orderType => {
+            if (orderType.active) {
+                this._orderTypesDictionary[orderType.id] = orderType;
+            }
+        });
+
+        refs.stores.forEach(store => {
+            this._storesDictionary[store.id] = store;
+        });
+
+        refs.terminals.forEach(terminal => {
+            this._terminalsDictionary[terminal.id] = terminal;
+        });
+
+        refs.languages.forEach(language => {
+            if (language.active) {
+                if (language.isDefault) {
+                    this._defaultLanguage = language;
+                }
+                this._languagesDictionary[language.id] = language;
+            }
+        });
+
+        refs.translations.forEach(translation => {
+            this._translationsDictionary[translation.id] = translation;
         });
 
         this._menu = this.buildMenuTree();
     }
 
-    private buildMenuTree(): IMenu {
+    private buildMenuTree(): ICompiledMenu {
         return this.buildNode(this._rootNode);
     }
 
-    private buildNode(node: INode): IMenuNode {
-        const menuNode: IMenuNode = {
+    private buildNode(node: INode): ICompiledMenuNode {
+
+        const children = new Array<ICompiledMenuNode>();
+
+        for (const childId of node.children) {
+            if (!!this._nodesDictionary[childId] && this._nodesDictionary[childId].active) {
+
+                const content = this.getCompiledNodeContent(this._nodesDictionary[childId]);
+
+                if (!!content) {
+                    children.push(this.buildNode(this._nodesDictionary[childId]));
+                }
+            }
+        }
+
+        const menuNode: ICompiledMenuNode = {
             id: node.id,
+            active: node.active,
             type: node.type,
             parentId: node.parentId,
-            content: this.getContent(node),
-            children: node.children.map(nodeId => this.buildNode(this._nodesDictionary[nodeId])),
+            content: this.getCompiledNodeContent(node),
+            children,
+            scenarios: node.scenarios,
+            extra: node.extra,
         };
 
         return menuNode;
     }
 
-    private getContent(node: INode): IMenuSelector | IMenuProduct | null {
+    private getCompiledNodeContent(node: INode): ICompiledSelector | ICompiledProduct | null {
         if (node) {
             switch (node.type) {
                 case NodeTypes.SELECTOR: {
-                    return this.getMenuSelector(node.contentId);
+                    return this._selectorsDictionary[node.contentId] ? this._compiledSelectorsDictionary[node.contentId] : undefined;
                 }
                 case NodeTypes.PRODUCT: {
-                    return this.getMenuProduct(node.contentId);
+                    return this._productsDictionary[node.contentId] ? this._compiledProductsDictionary[node.contentId] : undefined;
                 }
             }
         }
@@ -106,49 +198,79 @@ export class MenuBuilder {
         return null;
     }
 
-    private getMenuSelector(id: string): IMenuSelector {
+    private getCompiledSelector(id: string): ICompiledSelector {
         const selector = this._selectorsDictionary[id];
 
-        if (selector) {
+        if (!!selector) {
+            const contents: ICompiledEntityContents<ICompiledSelectorContents> = getCompiledContents(selector.contents, this._refs.languages, this._assetsDictionary);
+
             return {
                 id: selector.id,
-                name: selector.name,
-                description: selector.description,
+                type: selector.type,
+                contents,
+                minPrices: {},
+                extra: selector.extra,
             }
         }
 
         return null;
     }
 
-    private getMenuProduct(id: string): IMenuProduct {
+    private getCompiledProduct(id: string): ICompiledProduct {
         const product = this._productsDictionary[id];
 
-        if (product) {
+        if (!!product) {
+            const contents: ICompiledEntityContents<ICompiledProductContents> = getCompiledContents(product.contents, this._refs.languages, this._assetsDictionary);
+
+            const prices: {
+                [currencyCode: string]: {
+                    currency: ICurrency;
+                    value: number;
+                };
+            } = {};
+
+            for (const price of product.prices) {
+                prices[price.currency] = {
+                    currency: this._currenciesDictionary[price.currency],
+                    value: price.value,
+                };
+            }
+
+            const tags = new Array<ICompiledTag>();
+
+            for (const tagId of product.tags) {
+                if (!!this._compiledTagsDictionary[tagId]) {
+                    tags.push(this._compiledTagsDictionary[tagId]);
+                }
+            }
+
             return {
                 id: product.id,
-                name: product.name,
-                description: product.description,
-                // receipt: null, // product.receipt,
-                tags: product.tags.map(tagId => this.getMenuTag(tagId)),
-                mainAsset: this._assetsDictionary[product.mainAsset],
-                assets: product.assets.map(assetId => this._assetsDictionary[assetId]),
+                contents,
+                prices,
+                tags,
+                minPrices: {},
+                extra: product.extra,
             }
         }
 
         return null;
     }
 
-    private getMenuTag(id: string): IMenuTag {
+    private getCompiledTag(id: string): ICompiledTag {
         const tag = this._tagsDictionary[id];
 
-        if (tag) {
+        if (!!tag) {
+            const contents: ICompiledEntityContents<ICompiledTagContents> = getCompiledContents(tag.contents, this._refs.languages, this._assetsDictionary);
+
             return {
                 id: tag.id,
-                name: tag.name,
-                description: tag.description,
-                color: tag.color,
+                contents,
+                extra: tag.extra,
             }
         }
+
+        return null;
     }
 
     private reset(): void {
