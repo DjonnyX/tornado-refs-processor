@@ -33,7 +33,6 @@ export class DataCombiner {
         this._refBuilder = new RefBuilder(this.options.dataService);
         this._menuBuilder = new MenuBuilder();
 
-        this._refBuilder.get();
         this._refBuilder.onChange.pipe(
             switchMap(refs => !!refs ? this.options.assetsTransformer(refs.assets).pipe(
                         map(assets => {
@@ -55,12 +54,14 @@ export class DataCombiner {
                     });
                 }
 
-                this.getRefsDelayed();
+                // this.getRefsDelayed();
             }, err => {
                 console.error(err);
                 this.getRefsDelayed();
             }
         );
+        
+        this._refBuilder.get();
     }
 
     private getRefsDelayed(): void {

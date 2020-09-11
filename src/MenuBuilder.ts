@@ -1,4 +1,8 @@
-import { INode, IAsset, ISelector, IProduct, ITag, IRefs, NodeTypes, ICurrency, ITranslation, ILanguage, IBusinessPeriod, IOrderType, IStore, ITerminal, ICompiledMenu, ICompiledMenuNode, ICompiledSelector, ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents } from "@djonnyx/tornado-types";
+import {
+    INode, IAsset, ISelector, IProduct, ITag, IRefs, NodeTypes, ICurrency, ITranslation, ILanguage,
+    IBusinessPeriod, IOrderType, IStore, ITerminal, ICompiledMenu, ICompiledMenuNode, ICompiledSelector,
+    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents
+} from "@djonnyx/tornado-types";
 import { getCompiledContents } from "./utils/getCompiledContents";
 import { ICompiledEntityContents } from "@djonnyx/tornado-types/dist/interfaces/ICompiledEntityContents";
 
@@ -35,39 +39,81 @@ export class MenuBuilder {
         this._refs = refs;
 
         if (!refs) {
-            // err
-            return;
-        }
-
-        if (!refs.languages) {
-            // err
-            return;
+            throw Error("refs in not defined.");
         }
 
         if (!refs.assets) {
-            // err
-            return;
+            throw Error("assets ref in not defined.");
         }
 
         if (!refs.nodes) {
-            // err
-            return;
+            throw Error("nodes ref in not defined.");
         }
 
         if (!refs.selectors) {
-            // err
-            return;
+            throw Error("selectors ref in not defined.");
         }
 
         if (!refs.products) {
-            // err
-            return;
+            throw Error("products ref in not defined.");
         }
 
         if (!refs.tags) {
-            // err
-            return;
+            throw Error("tags ref in not defined.");
         }
+
+        if (!refs.languages) {
+            throw Error("languages ref in not defined.");
+        }
+
+        if (!refs.translations) {
+            throw Error("translations ref in not defined.");
+        }
+
+        if (!refs.businessPeriods) {
+            throw Error("business-periods ref in not defined.");
+        }
+
+        if (!refs.orderTypes) {
+            throw Error("order-types ref in not defined.");
+        }
+
+        if (!refs.currencies) {
+            throw Error("currencies ref in not defined.");
+        }
+
+        if (!refs.stores) {
+            throw Error("stores ref in not defined.");
+        }
+
+        if (!refs.terminals) {
+            throw Error("terminals ref in not defined.");
+        }
+
+        let firstLanguage: ILanguage;
+        refs.languages.forEach(language => {
+            if (language.active) {
+                if (language.isDefault) {
+                    this._defaultLanguage = language;
+                } else
+                    if (!firstLanguage) {
+                        firstLanguage = language;
+                    }
+                this._languagesDictionary[language.code] = language;
+            }
+        });
+
+        if (!this._defaultLanguage) {
+            if (!firstLanguage) {
+                throw Error("Default language not found.");
+            }
+
+            this._defaultLanguage = firstLanguage;
+        }
+
+        refs.translations.forEach(translation => {
+            this._translationsDictionary[translation.language] = translation;
+        });
 
         refs.nodes.forEach(node => {
             this._nodesDictionary[node.id] = node;
@@ -134,19 +180,6 @@ export class MenuBuilder {
             this._terminalsDictionary[terminal.id] = terminal;
         });
 
-        refs.languages.forEach(language => {
-            if (language.active) {
-                if (language.isDefault) {
-                    this._defaultLanguage = language;
-                }
-                this._languagesDictionary[language.id] = language;
-            }
-        });
-
-        refs.translations.forEach(translation => {
-            this._translationsDictionary[translation.id] = translation;
-        });
-
         this._menu = this.buildMenuTree();
     }
 
@@ -202,7 +235,7 @@ export class MenuBuilder {
         const selector = this._selectorsDictionary[id];
 
         if (!!selector) {
-            const contents: ICompiledEntityContents<ICompiledSelectorContents> = getCompiledContents(selector.contents, this._refs.languages, this._assetsDictionary);
+            const contents: ICompiledEntityContents<ICompiledSelectorContents> = getCompiledContents(selector.contents, this._refs.languages, this._defaultLanguage, this._assetsDictionary);
 
             return {
                 id: selector.id,
@@ -220,7 +253,7 @@ export class MenuBuilder {
         const product = this._productsDictionary[id];
 
         if (!!product) {
-            const contents: ICompiledEntityContents<ICompiledProductContents> = getCompiledContents(product.contents, this._refs.languages, this._assetsDictionary);
+            const contents: ICompiledEntityContents<ICompiledProductContents> = getCompiledContents(product.contents, this._refs.languages, this._defaultLanguage, this._assetsDictionary);
 
             const prices: {
                 [currencyCode: string]: {
@@ -261,7 +294,7 @@ export class MenuBuilder {
         const tag = this._tagsDictionary[id];
 
         if (!!tag) {
-            const contents: ICompiledEntityContents<ICompiledTagContents> = getCompiledContents(tag.contents, this._refs.languages, this._assetsDictionary);
+            const contents: ICompiledEntityContents<ICompiledTagContents> = getCompiledContents(tag.contents, this._refs.languages, this._defaultLanguage, this._assetsDictionary);
 
             return {
                 id: tag.id,
@@ -274,13 +307,30 @@ export class MenuBuilder {
     }
 
     private reset(): void {
-
+        // параметры
         this._rootNode = null;
+        this._defaultLanguage = undefined;
+        this._compiledSelectors = [];
+        this._compiledProducts = [];
+
+        // словари
+        this._languagesDictionary = {};
+        this._translationsDictionary = {};
         this._assetsDictionary = {};
         this._nodesDictionary = {};
         this._selectorsDictionary = {};
         this._productsDictionary = {};
         this._tagsDictionary = {};
+        this._currenciesDictionary = {};
+        this._businessPeriodsDictionary = {};
+        this._orderTypesDictionary = {};
+        this._storesDictionary = {};
+        this._terminalsDictionary = {};
+
+        // словари компилированных сущностей
+        this._compiledSelectorsDictionary = {};
+        this._compiledProductsDictionary = {};
+        this._compiledTagsDictionary = {};
 
         this._menu = null;
     }

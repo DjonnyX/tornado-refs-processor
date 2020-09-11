@@ -2,59 +2,59 @@ import { deepMergeObjects } from "./object";
 import { normalizeEntityContents } from "./entity";
 import { IAsset, ILanguage } from "@djonnyx/tornado-types";
 
-export const getCompiledContents = (entity: any, languages: Array<ILanguage>, assetsDictionary: { [id: string]: IAsset }) => {
-    const contents = {};
-    for (const lang in entity.contents) {
+export const getCompiledContents = (contents: any, languages: Array<ILanguage>, defaultLanguage: ILanguage, assetsDictionary: { [id: string]: IAsset }) => {
+    const result = {};
+    for (const lang in contents) {
         // переопределение контента для разных языков
-        contents[lang] = lang === this._defaultLanguage.code ? entity.contents[lang] : deepMergeObjects(entity.contents[this._defaultLanguage.code], entity.contents[lang]);
+        result[lang] = lang === defaultLanguage.code ? contents[lang] : deepMergeObjects(contents[this._defaultLanguage.code], contents[lang]);
     }
 
     // добовление контента языков которых нет в базе
     for (const lang of languages) {
-        if (contents[lang.code]) {
+        if (result[lang.code]) {
             continue;
         }
 
-        contents[lang.code] = entity.contents[this._defaultLanguage.code];
+        result[lang.code] = contents[defaultLanguage.code];
     }
 
-    normalizeEntityContents(contents, this._defaultLanguage.code);
+    normalizeEntityContents(result, defaultLanguage.code);
 
-    for (const lang in contents) {
+    for (const lang in result) {
 
         // нормализация ассетов
-        if (!!contents[lang].assets) {
+        if (!!result[lang].assets) {
             const normalizedAssets = new Array<IAsset>();
-            for (const assetId of contents[lang].assets) {
+            for (const assetId of result[lang].assets) {
                 if (assetsDictionary[assetId]) {
                     normalizedAssets.push(assetsDictionary[assetId]);
                 }
             }
-            contents[lang].assets = normalizedAssets;
+            result[lang].assets = normalizedAssets;
         }
 
         // нормализация галереи ресурсов
-        if (!!contents[lang].gallery) {
+        if (!!result[lang].gallery) {
             const normalizedGallery = new Array<IAsset>();
-            for (const assetId of contents[lang].assets) {
+            for (const assetId of result[lang].assets) {
                 if (assetsDictionary[assetId]) {
                     normalizedGallery.push(assetsDictionary[assetId]);
                 }
             }
-            contents[lang].assets = normalizedGallery;
+            result[lang].assets = normalizedGallery;
         }
 
         // нормализация ресурсов
-        if (!!contents[lang].resources) {
+        if (!!result[lang].resources) {
             const normalizedResources = new Array<IAsset>();
-            for (const resourceType in contents[lang].resources) {
-                if (assetsDictionary[contents[lang].resources[resourceType]]) {
-                    normalizedResources[resourceType] = assetsDictionary[contents[lang].resources[resourceType]];
+            for (const resourceType in result[lang].resources) {
+                if (assetsDictionary[result[lang].resources[resourceType]]) {
+                    normalizedResources[resourceType] = assetsDictionary[result[lang].resources[resourceType]];
                 }
             }
-            contents[lang].resources = normalizedResources;
+            result[lang].resources = normalizedResources;
         }
     }
 
-    return contents;
+    return result;
 }

@@ -40,13 +40,15 @@ export class RefBuilder {
         }
     }
 
-    get(): void {
+    get(): Observable<IRefs> {
         this._service.getRefs().pipe(
             take(1),
             takeUntil(this.unsubscribe$),
         ).subscribe(res => {
             this.checkForUpdateRefs(res);
         });
+
+        return this.onChange;
     }
 
     private normalizedRequestName(requestName: string): string {
@@ -55,7 +57,6 @@ export class RefBuilder {
 
         if (pattern.test(requestName)) {
             for (const char of requestName) {
-                console.log(char)
                 if (pattern.test(char)) {
                     result += `-${char.toLowerCase()}`;
                 } else {
@@ -67,19 +68,30 @@ export class RefBuilder {
         return result;
     }
 
-    private checkForUpdateRefs(refsInfo: Array<IRef>): void {
+    private checkForUpdateRefs(refsInfo: Array<IRef>): Observable<IRefs> {
         if (!refsInfo) {
             this._onChange.next(null);
-            return;
+            return of(null);
         }
 
         let sequenceList = new Array<Observable<boolean>>();
 
         refsInfo.forEach(refInfo => {
-            if (/^(languages|nodes|products|selectors|tags|assets|stores|terminals|bisinessPeriods|orderTypes|currencies|ads)$/.test(refInfo.name)) {
+            let refName: string;
+            switch (refInfo.name) {
+                case "business-periods":
+                    refName = "businessPeriods";
+                    break;
+                case "order-types":
+                    refName = "orderTypes";
+                    break;
+                default:
+                    refName = refInfo.name;
+            }
 
-                if (!this._refsInfoDictionary[refInfo.name] || this._refsInfoDictionary[refInfo.name].version !== refInfo.version) {
-                    const res = this.updateRefByName(refInfo.name);
+            if (/^(languages|translations|nodes|products|selectors|tags|assets|stores|terminals|businessPeriods|orderTypes|currencies|ads)$/.test(refName)) {
+                if (!this._refsInfoDictionary[refName] || this._refsInfoDictionary[refName].version !== refInfo.version) {
+                    const res = this.updateRefByName(refName);
                     sequenceList.push(res);
                 }
             }
@@ -89,7 +101,7 @@ export class RefBuilder {
 
         if (sequenceList.length === 0) {
             this._onChange.next(null);
-            return;
+            return of(null);
         }
 
         forkJoin(sequenceList).subscribe(res => {
@@ -105,6 +117,8 @@ export class RefBuilder {
                 this._onChange.next(this._refs);
             }
         });
+
+        return this.onChange;
     }
 
     private updateRefByName(refName: string): Observable<boolean> {

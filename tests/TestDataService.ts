@@ -1,66 +1,71 @@
 import { Observable, of } from "rxjs";
-import { IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes, ITranslation, IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal } from "@djonnyx/tornado-types";
+import { IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes, ITranslation, IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, AdTypes, TerminalStatusTypes, TerminalTypes, RefTypes } from "@djonnyx/tornado-types";
 
 const currentDate = new Date(Date.now());
 
 export const REFS_INFO_DATA: Array<IRef> = [
     {
-        name: "nodes",
+        name: RefTypes.NODES,
         version: 1,
         lastupdate: currentDate,
     },
     {
-        name: "products",
+        name: RefTypes.PRODUCTS,
         version: 1,
         lastupdate: currentDate,
     },
     {
-        name: "selectors",
+        name: RefTypes.SELECTORS,
         version: 1,
         lastupdate: currentDate,
     },
     {
-        name: "tags",
+        name: RefTypes.TAGS,
         version: 1,
         lastupdate: currentDate,
     },
     {
-        name: "assets",
+        name: RefTypes.ASSETS,
         version: 1,
         lastupdate: currentDate,
     },
     {
-        name: "stores",
+        name: RefTypes.STORES,
         version: 1,
         lastupdate: currentDate,
     },
     {
-        name: "terminals",
+        name: RefTypes.TERMINALS,
         version: 1,
         lastupdate: currentDate,
     },
     {
-        name: "business-periods",
+        name: RefTypes.BUSINESS_PERIODS,
         version: 1,
         lastupdate: currentDate,
     },
     {
-        name: "currencies",
+        name: RefTypes.CURRENCIES,
         version: 1,
         lastupdate: currentDate,
     },
     {
-        name: "order-types",
+        name: RefTypes.ORDER_TYPES,
         version: 1,
         lastupdate: currentDate,
     },
     {
-        name: "languages",
+        name: RefTypes.LANGUAGES,
         version: 1,
         lastupdate: currentDate,
     },
     {
-        name: "ads",
+        name: RefTypes.TRANSLATIONS,
+        version: 1,
+        lastupdate: currentDate,
+    },
+    {
+        name: RefTypes.ADS,
         version: 1,
         lastupdate: currentDate,
     },
@@ -75,7 +80,7 @@ export const LANGUAGES_DATA: Array<ILanguage> = [
         name: "Русский",
         assets: ["la1"],
         resources: { main: "la1" },
-        translation: "trans1",
+        translation: "507c7f79bcf86cd7994f6c0e",
         extra: { key: "value" },
     }
 ];
@@ -180,7 +185,7 @@ export const PRODUCTS_DATA: Array<IProduct> = [
             }
         },
         prices: [{
-            currency: "c1",
+            currency: "507c7f79bcf86cd7994f6c0e",
             value: 10000,
         }],
         extra: { key: "value" },
@@ -204,7 +209,7 @@ export const PRODUCTS_DATA: Array<IProduct> = [
             }
         },
         prices: [{
-            currency: "c1",
+            currency: "507c7f79bcf86cd7994f6c0e",
             value: 10000,
         }],
         extra: { key: "value" },
@@ -306,6 +311,148 @@ export const ASSETS_DATA: Array<IAsset> = [
     },
 ];
 
+export const TRANSLATIONS_DATA: Array<ITranslation> = [
+    {
+        id: "507c7f79bcf86cd7994f6c0e",
+        language: LANGUAGES_DATA[0].code,
+        items: [
+            {
+                key: "take-away",
+                value: "Взять с собой",
+            }
+        ],
+        extra: {
+            key: "value",
+        }
+    }
+];
+
+export const CURRENCIES_DATA: Array<ICurrency> = [
+    {
+        id: "507c7f79bcf86cd7994f6c0e",
+        active: true,
+        code: "RUB",
+        name: "Рубль",
+        symbol: "₽",
+        extra: {
+            key: "value",
+        },
+    }
+];
+
+export const BUSINESS_PERIODS_DATA: Array<IBusinessPeriod> = [
+    {
+        id: "507c7f79bcf86cd7994f6c0e",
+        active: true,
+        contents: {
+            [LANGUAGES_DATA[0].code]: {
+                name: "Business period",
+                description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
+            }
+        },
+        schedule: [
+            {
+                active: true,
+                time: {
+                    start: 0,
+                    end: 84000000,
+                },
+                weekDays: [
+                    0,
+                    1,
+                    2,
+                ]
+            }
+        ],
+        extra: {
+            key: "value",
+        },
+    }
+];
+
+export const ORDER_TYPES_DATA: Array<IOrderType> = [
+    {
+        id: "507c7f79bcf86cd7994f6c0e",
+        active: true,
+        contents: {
+            [LANGUAGES_DATA[0].code]: {
+                name: "Take away",
+                description: "description",
+                color: "#000000",
+                assets: [
+                    "a1",
+                    "a2",
+                ],
+                resources: {
+                    main: "a1",
+                    icon: "a2",
+                }
+            }
+        },
+        extra: {
+            key: "value",
+        },
+    }
+];
+
+export const ADS_DATA: Array<IAd> = [
+    {
+        id: "507c7f79bcf86cd7994f6c0e",
+        active: true,
+        type: AdTypes.BANNER,
+        contents: {
+            [LANGUAGES_DATA[0].code]: {
+                name: "Ads on concert",
+                duration: 10,
+                color: "#000000",
+                resources: {
+                    main: "a1",
+                },
+                assets: [
+                    "a1",
+                ]
+            }
+        },
+        extra: {
+            key: "value",
+        },
+    }
+];
+
+export const STORES_DATA: Array<IStore> = [
+    {
+        id: "507c7f79bcf86cd7994f6c0e",
+        active: true,
+        name: "My store",
+        address: "Moscow",
+        terminals: [
+            "a0830860-d869-4d31-837f-122097f75f4a",
+            "2aff85fb-2316-4554-869c-df2ecd9126e9",
+        ],
+        employes: [
+            "a0830860-d869-4d31-837f-122097f75f4a",
+            "2aff85fb-2316-4554-869c-df2ecd9126e9",
+        ],
+        extra: {
+            key: "value",
+        },
+    }
+];
+
+export const TERMINALS_DATA: Array<ITerminal> = [
+    {
+        id: "507c7f79bcf86cd7994f6c0e",
+        status: TerminalStatusTypes.ONLINE,
+        type: TerminalTypes.KIOSK,
+        name: "My terminal",
+        store: STORES_DATA[0].id,
+        lastwork: new Date(),
+        extra: {
+            key: "value",
+        },
+    }
+];
+
 export class TestDataService {
     getRefs(): Observable<Array<IRef>> {
         return of(REFS_INFO_DATA);
@@ -336,30 +483,30 @@ export class TestDataService {
     }
 
     getTranslations(): Observable<Array<ITranslation>> {
-        return of(null);
+        return of(TRANSLATIONS_DATA);
     }
 
     getBusinessPeriods(): Observable<Array<IBusinessPeriod>> {
-        return of(null);
+        return of(BUSINESS_PERIODS_DATA);
     }
 
     getOrderTypes(): Observable<Array<IOrderType>> {
-        return of(null);
+        return of(ORDER_TYPES_DATA);
     }
 
     getCurrencies(): Observable<Array<ICurrency>> {
-        return of(null);
+        return of(CURRENCIES_DATA);
     }
 
     getAds(): Observable<Array<IAd>> {
-        return of(null);
+        return of(ADS_DATA);
     }
 
     getStores(): Observable<Array<IStore>> {
-        return of(null);
+        return of(STORES_DATA);
     }
 
     getTerminals(): Observable<Array<ITerminal>> {
-        return of(null);
+        return of(TERMINALS_DATA);
     }
 }
