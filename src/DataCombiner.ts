@@ -1,6 +1,6 @@
 import { switchMap, map } from "rxjs/operators";
 import { of, Subject, Observable } from "rxjs";
-import { ICombinedData, IAsset } from "@djonnyx/tornado-types";
+import { ICompiledData, IAsset } from "@djonnyx/tornado-types";
 import { RefBuilder } from "./RefBuilder";
 import { MenuBuilder } from "./MenuBuilder";
 import { IDataService } from "./IDataService";
@@ -15,7 +15,7 @@ export class DataCombiner {
 
     private static _current: DataCombiner;
 
-    private _onChange = new Subject<ICombinedData>();
+    private _onChange = new Subject<ICompiledData>();
     readonly onChange = this._onChange.asObservable();
 
     private _refBuilder: RefBuilder;
