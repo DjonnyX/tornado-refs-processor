@@ -33,30 +33,21 @@ const COMPILED_MENU: ICompiledMenu = {
                             "icon": ASSETS_DATA[1]
                         },
                         "assets": [
-                            {
-                                "id": "a1",
-                                "active": true,
-                                "name": "asset_1.png",
-                                "lastupdate": currentTestDate,
-                                "ext": ".png",
-                                "path": "assets/a1",
-                                "mipmap": {
-                                    "x128": "assets/a1_x128.png",
-                                    "x32": "assets/a1_x32.png"
-                                }
-                            },
-                            {
-                                "id": "a2",
-                                "active": true,
-                                "name": "asset_2.png",
-                                "lastupdate": currentTestDate,
-                                "ext": ".png",
-                                "path": "assets/a2.png",
-                                "mipmap": {
-                                    "x128": "assets/a2_x128.png",
-                                    "x32": "assets/a2_x32.png"
-                                }
-                            }
+                            ASSETS_DATA[0],
+                            ASSETS_DATA[1]
+                        ]
+                    },
+                    [LANGUAGES_DATA[1].code]: {
+                        "name": "selector 1",
+                        "description": "",
+                        "color": "0xff00ff",
+                        "resources": {
+                            "main": ASSETS_DATA[0],
+                            "icon": ASSETS_DATA[1]
+                        },
+                        "assets": [
+                            ASSETS_DATA[0],
+                            ASSETS_DATA[1]
                         ]
                     }
                 },
@@ -76,8 +67,22 @@ const COMPILED_MENU: ICompiledMenu = {
                         "contents": {
                             [LANGUAGES_DATA[0].code]: {
                                 "name": "product 1",
-                                "description": "",
+                                "description": "Lorem ipsum",
                                 "color": "0xff00ff",
+                                "resources": {
+                                    "main": ASSETS_DATA[0],
+                                    "icon": ASSETS_DATA[1]
+                                },
+                                "assets": [
+                                    ASSETS_DATA[0],
+                                    ASSETS_DATA[1]
+                                ],
+                                "gallery": []
+                            },
+                            [LANGUAGES_DATA[1].code]: {
+                                "name": "Продукт 1",
+                                "description": "Lorem ipsum",
+                                "color": "0x000000",
                                 "resources": {
                                     "main": ASSETS_DATA[0],
                                     "icon": ASSETS_DATA[1]
@@ -111,6 +116,19 @@ const COMPILED_MENU: ICompiledMenu = {
                                             ASSETS_DATA[0],
                                             ASSETS_DATA[1]
                                         ]
+                                    },
+                                    [LANGUAGES_DATA[1].code]: {
+                                        "name": "tag 1",
+                                        "description": "",
+                                        "color": "0xff00ff",
+                                        "resources": {
+                                            "main": ASSETS_DATA[0],
+                                            "icon": ASSETS_DATA[1]
+                                        },
+                                        "assets": [
+                                            ASSETS_DATA[0],
+                                            ASSETS_DATA[1]
+                                        ]
                                     }
                                 },
                                 "extra": {
@@ -121,6 +139,19 @@ const COMPILED_MENU: ICompiledMenu = {
                                 "id": "t2",
                                 "contents": {
                                     [LANGUAGES_DATA[0].code]: {
+                                        "name": "tag 2",
+                                        "description": "",
+                                        "color": "0xef0000",
+                                        "resources": {
+                                            "main": ASSETS_DATA[0],
+                                            "icon": ASSETS_DATA[1]
+                                        },
+                                        "assets": [
+                                            ASSETS_DATA[0],
+                                            ASSETS_DATA[1]
+                                        ]
+                                    },
+                                    [LANGUAGES_DATA[1].code]: {
                                         "name": "tag 2",
                                         "description": "",
                                         "color": "0xef0000",
@@ -171,6 +202,20 @@ const COMPILED_MENU: ICompiledMenu = {
                                     ASSETS_DATA[1]
                                 ],
                                 "gallery": []
+                            },
+                            [LANGUAGES_DATA[1].code]: {
+                                "name": "product 2",
+                                "description": "",
+                                "color": "0xff00ff",
+                                "resources": {
+                                    "main": ASSETS_DATA[2],
+                                    "icon": ASSETS_DATA[1]
+                                },
+                                "assets": [
+                                    ASSETS_DATA[2],
+                                    ASSETS_DATA[1]
+                                ],
+                                "gallery": []
                             }
                         },
                         "prices": {
@@ -184,6 +229,19 @@ const COMPILED_MENU: ICompiledMenu = {
                                 "id": "t3",
                                 "contents": {
                                     [LANGUAGES_DATA[0].code]: {
+                                        "name": "tag 3",
+                                        "description": "",
+                                        "color": "0x000000",
+                                        "resources": {
+                                            "main": ASSETS_DATA[0],
+                                            "icon": ASSETS_DATA[1]
+                                        },
+                                        "assets": [
+                                            ASSETS_DATA[0],
+                                            ASSETS_DATA[1]
+                                        ]
+                                    },
+                                    [LANGUAGES_DATA[1].code]: {
                                         "name": "tag 3",
                                         "description": "",
                                         "color": "0x000000",

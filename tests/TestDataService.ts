@@ -82,6 +82,17 @@ export const LANGUAGES_DATA: Array<ILanguage> = [
         resources: { main: "la1" },
         translation: "507c7f79bcf86cd7994f6c0e",
         extra: { key: "value" },
+    },
+    {
+        id: "l2",
+        active: true,
+        isDefault: true,
+        code: "ENG",
+        name: "English",
+        assets: ["a1"],
+        resources: { main: "a1" },
+        translation: "507c7f79bcf86cd7994f6c0e",
+        extra: { key: "value" },
     }
 ];
 
@@ -174,13 +185,24 @@ export const PRODUCTS_DATA: Array<IProduct> = [
         contents: {
             [LANGUAGES_DATA[0].code]: {
                 name: "product 1",
-                description: "",
+                description: "Lorem ipsum",
                 color: "0xff00ff",
                 resources: {
                     main: "a1",
                     icon: "a2",
                 },
                 assets: ["a1", "a2"],
+                gallery: [],
+            },
+            [LANGUAGES_DATA[1].code]: {
+                name: "Продукт 1",
+                description: null,
+                color: "0x000000",
+                resources: {
+                    main: null,
+                    icon: null,
+                },
+                assets: [],
                 gallery: [],
             }
         },

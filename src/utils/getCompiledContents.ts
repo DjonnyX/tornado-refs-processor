@@ -6,7 +6,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
     const result = {};
     for (const lang in contents) {
         // переопределение контента для разных языков
-        result[lang] = lang === defaultLanguage.code ? {...contents[lang]} : deepMergeObjects(contents[this._defaultLanguage.code], contents[lang]);
+        result[lang] = lang === defaultLanguage.code ? {...contents[lang]} : deepMergeObjects(contents[defaultLanguage.code], contents[lang]);
     }
 
     // добовление контента языков которых нет в базе
