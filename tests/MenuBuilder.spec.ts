@@ -299,8 +299,8 @@ describe('DataCombiner', () => {
             ).subscribe(
                 data => {
 
-                    fs.writeFileSync("output/compiledData.json", JSON.stringify(data.menu));
-                    fs.writeFileSync("output/compiledDataReference.json", JSON.stringify(COMPILED_MENU));
+                    fs.writeFileSync("output/compiledMenu.json", JSON.stringify(data.menu));
+                    fs.writeFileSync("output/compiledMenuReference.json", JSON.stringify(COMPILED_MENU));
 
                     resolve(data.menu);
                 },
