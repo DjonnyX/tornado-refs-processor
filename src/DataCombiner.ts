@@ -79,6 +79,11 @@ export class DataCombiner {
             this._refBuilder = null;
         }
 
+        if (!this._menuBuilder) {
+            this._menuBuilder.dispose();
+            this._menuBuilder = null;
+        }
+
         if (!!this._unsubscribe$) {
             this._unsubscribe$.next();
             this._unsubscribe$.complete();
