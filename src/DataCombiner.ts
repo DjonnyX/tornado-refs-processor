@@ -54,7 +54,7 @@ export class DataCombiner {
                     });
                 }
 
-                // this.getRefsDelayed();
+                this.getRefsDelayed();
             }, err => {
                 console.error(err);
                 this.getRefsDelayed();
