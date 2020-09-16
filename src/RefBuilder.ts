@@ -96,7 +96,7 @@ export class RefBuilder {
                 }
             }
 
-            this._refsInfoDictionary[refInfo.name] = refInfo;
+            this._refsInfoDictionary[refName] = refInfo;
         });
 
         if (sequenceList.length === 0) {
