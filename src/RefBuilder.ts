@@ -4,7 +4,7 @@ import { IRef, IRefs } from "@djonnyx/tornado-types";
 import { IDataService } from "./IDataService";
 
 export class RefBuilder {
-    protected unsubscribe$ = new Subject<void>();
+    private _unsubscribe$ = new Subject<void>();
 
     private _refsInfoDictionary: { [refName: string]: IRef } = {};
 
@@ -30,20 +30,25 @@ export class RefBuilder {
     constructor(private _service: IDataService) { }
 
     dispose(): void {
-        this.unsubscribe$.next();
-        this.unsubscribe$.complete();
-        this.unsubscribe$ = null;
+        if (!!this._unsubscribe$) {
+            this._unsubscribe$.next();
+            this._unsubscribe$.complete();
+            this._unsubscribe$ = null;
+        }
 
-        if (this._onChange) {
+        if (!!this._onChange) {
             this._onChange.unsubscribe();
             this._onChange = null;
         }
+
+        this._refsInfoDictionary = null;
+        this._refs = null;
     }
 
     get(): Observable<IRefs> {
         this._service.getRefs().pipe(
             take(1),
-            takeUntil(this.unsubscribe$),
+            takeUntil(this._unsubscribe$),
         ).subscribe(res => {
             this.checkForUpdateRefs(res);
         });
@@ -96,7 +101,7 @@ export class RefBuilder {
                 }
             }
 
-            this._refsInfoDictionary[refInfo.name] = refInfo;
+            this._refsInfoDictionary[refName] = refInfo;
         });
 
         if (sequenceList.length === 0) {

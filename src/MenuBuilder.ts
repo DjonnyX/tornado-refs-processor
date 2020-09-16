@@ -333,4 +333,30 @@ export class MenuBuilder {
 
         this._menu = null;
     }
+
+    dispose(): void {
+        this._rootNode = null;
+        this._defaultLanguage = undefined;
+        this._compiledSelectors = null;
+        this._compiledProducts = null;
+
+        this._languagesDictionary = null;
+        this._translationsDictionary = null;
+        this._assetsDictionary = null;
+        this._nodesDictionary = null;
+        this._selectorsDictionary = null;
+        this._productsDictionary = null;
+        this._tagsDictionary = null;
+        this._currenciesDictionary = null;
+        this._businessPeriodsDictionary = null;
+        this._orderTypesDictionary = null;
+        this._storesDictionary = null;
+        this._terminalsDictionary = null;
+
+        this._compiledSelectorsDictionary = null;
+        this._compiledProductsDictionary = null;
+        this._compiledTagsDictionary = null;
+
+        this._menu = null;
+    }
 }
