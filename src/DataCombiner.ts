@@ -1,4 +1,4 @@
-import { switchMap, map } from "rxjs/operators";
+import { switchMap, map, takeUntil } from "rxjs/operators";
 import { of, Subject, Observable } from "rxjs";
 import { ICompiledData, IAsset } from "@djonnyx/tornado-types";
 import { RefBuilder } from "./RefBuilder";
@@ -21,6 +21,10 @@ export class DataCombiner {
     private _refBuilder: RefBuilder;
     private _menuBuilder: MenuBuilder;
 
+    private _unsubscribe$ = new Subject<void>();
+
+    private _delayer: any;
+
     constructor(private options: IDataCombinerOptions) {
         if (!!DataCombiner._current) {
             throw Error("DataCombiner must have only one instance.");
@@ -34,15 +38,16 @@ export class DataCombiner {
         this._menuBuilder = new MenuBuilder();
 
         this._refBuilder.onChange.pipe(
+            takeUntil(this._unsubscribe$),
             switchMap(refs => !!refs ? this.options.assetsTransformer(refs.assets).pipe(
-                        map(assets => {
-                            if (assets) {
-                                refs.assets = assets;
-                            }
-                            return refs;
-                        }),
-                    ) :
-                    of(null),
+                map(assets => {
+                    if (assets) {
+                        refs.assets = assets;
+                    }
+                    return refs;
+                }),
+            ) :
+                of(null),
             ),
         ).subscribe(
             refs => {
@@ -60,11 +65,28 @@ export class DataCombiner {
                 this.getRefsDelayed();
             }
         );
-        
+
         this._refBuilder.get();
     }
 
     private getRefsDelayed(): void {
-        setTimeout(() => { this._refBuilder.get(); }, this.options.updateTimeout);
+        this._delayer = setTimeout(() => { this._refBuilder.get(); }, this.options.updateTimeout);
+    }
+
+    dispose(): void {
+        if (!this._refBuilder) {
+            this._refBuilder.dispose();
+            this._refBuilder = null;
+        }
+
+        if (!!this._unsubscribe$) {
+            this._unsubscribe$.next();
+            this._unsubscribe$.complete();
+            this._unsubscribe$ = null;
+        }
+
+        clearTimeout(this._delayer);
+
+        DataCombiner._current = null;
     }
 }
