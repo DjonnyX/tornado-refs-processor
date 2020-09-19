@@ -1,5 +1,6 @@
-import { Observable, of } from "rxjs";
+import { Observable, of, interval } from "rxjs";
 import { IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes, ITranslation, IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, AdTypes, TerminalStatusTypes, TerminalTypes, RefTypes } from "@djonnyx/tornado-types";
+import { take, switchMap } from "rxjs/operators";
 
 const currentTestDate = new Date("2020-09-11T11:18:11.284Z");
 
@@ -475,60 +476,67 @@ export const TERMINALS_DATA: Array<ITerminal> = [
     }
 ];
 
+const request = (data: any) => {
+    return interval(100).pipe(
+        take(1),
+        switchMap(() => of(data)),
+    );
+}
+
 export class TestDataService {
     getRefs(): Observable<Array<IRef>> {
-        return of(REFS_INFO_DATA);
+        return request(REFS_INFO_DATA);
     };
 
     getNodes(): Observable<Array<INode>> {
-        return of(NODES_DATA);
+        return request(NODES_DATA);
     }
 
     getSelectors(): Observable<Array<ISelector>> {
-        return of(SELECTORS_DATA);
+        return request(SELECTORS_DATA);
     }
 
     getProducts(): Observable<Array<IProduct>> {
-        return of(PRODUCTS_DATA);
+        return request(PRODUCTS_DATA);
     }
 
     getTags(): Observable<Array<ITag>> {
-        return of(TAGS_DATA);
+        return request(TAGS_DATA);
     }
 
     getAssets(): Observable<Array<IAsset>> {
-        return of(ASSETS_DATA);
+        return request(ASSETS_DATA);
     }
 
     getLanguages(): Observable<Array<ILanguage>> {
-        return of(LANGUAGES_DATA);
+        return request(LANGUAGES_DATA);
     }
 
     getTranslations(): Observable<Array<ITranslation>> {
-        return of(TRANSLATIONS_DATA);
+        return request(TRANSLATIONS_DATA);
     }
 
     getBusinessPeriods(): Observable<Array<IBusinessPeriod>> {
-        return of(BUSINESS_PERIODS_DATA);
+        return request(BUSINESS_PERIODS_DATA);
     }
 
     getOrderTypes(): Observable<Array<IOrderType>> {
-        return of(ORDER_TYPES_DATA);
+        return request(ORDER_TYPES_DATA);
     }
 
     getCurrencies(): Observable<Array<ICurrency>> {
-        return of(CURRENCIES_DATA);
+        return request(CURRENCIES_DATA);
     }
 
     getAds(): Observable<Array<IAd>> {
-        return of(ADS_DATA);
+        return request(ADS_DATA);
     }
 
     getStores(): Observable<Array<IStore>> {
-        return of(STORES_DATA);
+        return request(STORES_DATA);
     }
 
     getTerminals(): Observable<Array<ITerminal>> {
-        return of(TERMINALS_DATA);
+        return request(TERMINALS_DATA);
     }
 }

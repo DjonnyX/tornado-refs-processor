@@ -1,10 +1,15 @@
-import { Observable, of, forkJoin, Subject } from "rxjs";
-import { switchMap, takeUntil, take, catchError } from "rxjs/operators";
+import { Observable, of, concat, Subject, BehaviorSubject } from "rxjs";
+import { switchMap, takeUntil, take, catchError, map } from "rxjs/operators";
 import { IRef, IRefs } from "@djonnyx/tornado-types";
 import { IDataService } from "./IDataService";
 
+interface IProgress {
+    total: number;
+    current: number;
+}
+
 export class RefBuilder {
-    private _unsubscribe$ = new Subject<void>();
+    protected unsubscribe$ = new Subject<void>();
 
     private _refsInfoDictionary: { [refName: string]: IRef } = {};
 
@@ -27,18 +32,35 @@ export class RefBuilder {
     private _onChange = new Subject<IRefs>();
     public onChange = this._onChange.asObservable();
 
+    private _initialProgressState: IProgress = {
+        total: 13,
+        current: 0,
+    }
+
+    protected progressState: IProgress = {
+        ...this._initialProgressState,
+    }
+
+    private _onProgress = new BehaviorSubject<IProgress>(this.progressState);
+    public onProgress = this._onProgress.asObservable();
+
     constructor(private _service: IDataService) { }
 
     dispose(): void {
-        if (!!this._unsubscribe$) {
-            this._unsubscribe$.next();
-            this._unsubscribe$.complete();
-            this._unsubscribe$ = null;
+        if (!!this.unsubscribe$) {
+            this.unsubscribe$.next();
+            this.unsubscribe$.complete();
+            this.unsubscribe$ = null;
         }
 
         if (!!this._onChange) {
             this._onChange.unsubscribe();
             this._onChange = null;
+        }
+
+        if (!!this._onProgress) {
+            this._onProgress.unsubscribe();
+            this._onProgress = null;
         }
 
         this._refsInfoDictionary = null;
@@ -48,7 +70,7 @@ export class RefBuilder {
     get(): Observable<IRefs> {
         this._service.getRefs().pipe(
             take(1),
-            takeUntil(this._unsubscribe$),
+            takeUntil(this.unsubscribe$),
         ).subscribe(res => {
             this.checkForUpdateRefs(res);
         });
@@ -79,7 +101,7 @@ export class RefBuilder {
             return of(null);
         }
 
-        let sequenceList = new Array<Observable<boolean>>();
+        let sequenceList = new Array<Observable<any>>();
 
         refsInfo.forEach(refInfo => {
             let refName: string;
@@ -109,19 +131,34 @@ export class RefBuilder {
             return of(null);
         }
 
-        forkJoin(sequenceList).subscribe(res => {
-            let needRebuild = false;
+        const refs = [];
 
-            res.forEach(val => {
-                if (val) {
-                    needRebuild = true;
+        this.progressState = {...this._initialProgressState};
+        this._onProgress.next(this.progressState);
+
+        concat(...sequenceList).subscribe(
+            (needUpdate) => {
+                this.progressState.current ++;
+                this._onProgress.next(this.progressState);
+                refs.push(needUpdate);
+            },
+            (err) => {
+                console.error(`Download ref error. ${err}`);
+            },
+            () => {
+                let needRebuild = false;
+
+                refs.forEach(val => {
+                    if (val) {
+                        needRebuild = true;
+                    }
+                });
+
+                if (needRebuild) {
+                    this._onChange.next(this._refs);
                 }
-            });
-
-            if (needRebuild) {
-                this._onChange.next(this._refs);
             }
-        });
+        );
 
         return this.onChange;
     }
@@ -134,6 +171,7 @@ export class RefBuilder {
         }
 
         return req.pipe(
+            takeUntil(this.unsubscribe$),
             catchError(err => {
                 console.error(err);
                 return of(false);

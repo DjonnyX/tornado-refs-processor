@@ -24,6 +24,11 @@ describe('RefBuilder', () => {
             }, err => {
                 reject(err);
             });
+            
+            refBuilder.onProgress.subscribe(progress => {
+                console.log(progress.current / progress.total * 100);
+            });
+
 
             refBuilder.get();
         });

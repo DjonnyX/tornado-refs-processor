@@ -1,6 +1,6 @@
 import { switchMap, map, takeUntil } from "rxjs/operators";
 import { of, Subject, Observable } from "rxjs";
-import { ICompiledData, IAsset } from "@djonnyx/tornado-types";
+import { ICompiledData, IAsset, AdTypes, SelectorTypes } from "@djonnyx/tornado-types";
 import { RefBuilder } from "./RefBuilder";
 import { MenuBuilder } from "./MenuBuilder";
 import { IDataService } from "./IDataService";
@@ -54,7 +54,22 @@ export class DataCombiner {
                 if (!!refs) {
                     this._menuBuilder.build(refs);
                     this._onChange.next({
-                        refs,
+                        refs: {
+                            __raw: refs,
+                            orderTypes: this._menuBuilder.compiledOrderTypes,
+                            languages: this._menuBuilder.compiledLanguages,
+                            defaultLanguage: this._menuBuilder.compiledDefaultLanguage,
+                            tags: this._menuBuilder.compiledTags,
+                            ads: {
+                                intros: this._menuBuilder.compiledAds.filter(v => v.type === AdTypes.INTRO),
+                                banners: this._menuBuilder.compiledAds.filter(v => v.type === AdTypes.BANNER),
+                            },
+                            selectors: {
+                                menu: this._menuBuilder.compiledSelectors.filter(v => v.type === SelectorTypes.MENU_CATEGORY),
+                                schema: this._menuBuilder.compiledSelectors.filter(v => v.type === SelectorTypes.SCHEMA_CATEGORY),
+                            },
+                            products: this._menuBuilder.compiledProducts,
+                        },
                         menu: this._menuBuilder.menu,
                     });
                 }

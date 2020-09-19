@@ -283,7 +283,7 @@ const COMPILED_MENU: ICompiledMenu = {
 };
 
 describe('DataCombiner', () => {
-    it('should return valid refs', async () => {
+    it('should return valid menu', async () => {
         const menu = await new Promise((resolve, reject) => {
             const service = new TestDataService();
             const dataCombiner = new DataCombiner({
