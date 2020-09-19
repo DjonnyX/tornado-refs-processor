@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import * as fs from "fs";
-import { of } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { of, interval } from 'rxjs';
+import { take, switchMap } from 'rxjs/operators';
 import { IAsset, ICompiledMenu, SelectorTypes, NodeTypes } from '@djonnyx/tornado-types';
 import { TestDataService, CURRENCIES_DATA, ASSETS_DATA, LANGUAGES_DATA } from "./TestDataService";
-import { DataCombiner } from "../src/DataCombiner";
+import { DataCombiner, IProgress } from "../src/DataCombiner";
 
 const COMPILED_MENU: ICompiledMenu = {
     "id": "n1",
@@ -286,9 +286,28 @@ describe('DataCombiner', () => {
     it('should return valid menu', async () => {
         const menu = await new Promise((resolve, reject) => {
             const service = new TestDataService();
+            const progress: IProgress = {
+                total: 10,
+                current: 0,
+            };
+            
             const dataCombiner = new DataCombiner({
                 assetsTransformer: (assets: Array<IAsset>) => {
-                    return of(assets);
+                    return {
+                        onComplete: interval(1000).pipe(
+                            take(1),
+                            switchMap(() => {
+                                return of(assets);
+                            }),
+                        ),
+                        onProgress: interval(50).pipe(
+                            take(10),
+                            switchMap(() => {
+                                progress.current ++;
+                                return of(progress);
+                            })
+                        )
+                    };
                 },
                 dataService: service,
                 updateTimeout: 99999999,
@@ -308,6 +327,10 @@ describe('DataCombiner', () => {
                     reject(err);
                 }
             );
+
+            dataCombiner.onProgress.subscribe(progress => {
+                console.log(progress);
+            });
 
             dataCombiner.init();
         });

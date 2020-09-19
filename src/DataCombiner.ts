@@ -6,9 +6,17 @@ import { MenuBuilder } from "./MenuBuilder";
 import { IDataService } from "./IDataService";
 
 export interface IDataCombinerOptions {
-    assetsTransformer: (assets: Array<IAsset>) => Observable<Array<IAsset>>;
+    assetsTransformer: (assets: Array<IAsset>) => {
+        onComplete: Observable<Array<IAsset>>;
+        onProgress: Observable<IProgress>;
+    }
     dataService: IDataService;
     updateTimeout: number;
+}
+
+export interface IProgress {
+    total: number;
+    current: number;
 }
 
 export class DataCombiner {
@@ -17,6 +25,9 @@ export class DataCombiner {
 
     private _onChange = new Subject<ICompiledData>();
     readonly onChange = this._onChange.asObservable();
+
+    private _onProgress = new Subject<IProgress>();
+    readonly onProgress = this._onProgress.asObservable();
 
     private _refBuilder: RefBuilder;
     private _menuBuilder: MenuBuilder;
@@ -39,15 +50,27 @@ export class DataCombiner {
 
         this._refBuilder.onChange.pipe(
             takeUntil(this._unsubscribe$),
-            switchMap(refs => !!refs ? this.options.assetsTransformer(refs.assets).pipe(
-                map(assets => {
-                    if (assets) {
-                        refs.assets = assets;
-                    }
-                    return refs;
-                }),
-            ) :
-                of(null),
+            switchMap(refs => {
+                if (!!refs) {
+                    const assetsTransformerResult = this.options.assetsTransformer(refs.assets);
+                    assetsTransformerResult.onProgress.pipe(
+                        takeUntil(this._unsubscribe$),
+                    ).subscribe(progress => {
+                        this._onProgress.next(progress);
+                    });
+
+                    return assetsTransformerResult.onComplete.pipe(
+                        map(assets => {
+                            if (assets) {
+                                refs.assets = assets;
+                            }
+                            return refs;
+                        }),
+                    )
+                } else {
+                    of(null)
+                }
+            }
             ),
         ).subscribe(
             refs => {
@@ -80,6 +103,12 @@ export class DataCombiner {
                 this.getRefsDelayed();
             }
         );
+
+        this._refBuilder.onProgress.pipe(
+            takeUntil(this._unsubscribe$),
+        ).subscribe(progress => {
+            this._onProgress.next(progress);
+        })
 
         this._refBuilder.get();
     }

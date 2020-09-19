@@ -26,9 +26,8 @@ describe('RefBuilder', () => {
             });
             
             refBuilder.onProgress.subscribe(progress => {
-                console.log(progress.current / progress.total * 100);
+                console.log(progress);
             });
-
 
             refBuilder.get();
         });
@@ -48,5 +47,7 @@ describe('RefBuilder', () => {
             currencies: CURRENCIES_DATA,
             ads: ADS_DATA,
         }));
+
+        refBuilder.dispose();
     });
 });
