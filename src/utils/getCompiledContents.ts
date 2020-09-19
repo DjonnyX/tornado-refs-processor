@@ -26,7 +26,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
         if (!!result[lang].assets) {
             const normalizedAssets = new Array<IAsset>();
             for (const assetId of result[lang].assets) {
-                if (assetsDictionary[assetId]) {
+                if (!!assetsDictionary[assetId]) {
                     normalizedAssets.push(assetsDictionary[assetId]);
                 }
             }
@@ -37,7 +37,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
         if (!!result[lang].gallery) {
             const normalizedGallery = new Array<IAsset>();
             for (const assetId of result[lang].gallery) {
-                if (assetsDictionary[assetId]) {
+                if (!!assetsDictionary[assetId]) {
                     normalizedGallery.push(assetsDictionary[assetId]);
                 }
             }
@@ -48,7 +48,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
         if (!!result[lang].resources) {
             const normalizedResources = { ...result[lang].resources };
             for (const resourceType in result[lang].resources) {
-                if (assetsDictionary[result[lang].resources[resourceType]]) {
+                if (!!assetsDictionary[result[lang].resources[resourceType]]) {
                     normalizedResources[resourceType] = assetsDictionary[result[lang].resources[resourceType]];
                 }
             }

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as fs from "fs";
-import { of, interval } from 'rxjs';
-import { take, switchMap } from 'rxjs/operators';
+import { of, interval, Subject } from 'rxjs';
+import { take, switchMap, takeUntil } from 'rxjs/operators';
 import { IAsset, ICompiledMenu, SelectorTypes, NodeTypes } from '@djonnyx/tornado-types';
 import { TestDataService, CURRENCIES_DATA, ASSETS_DATA, LANGUAGES_DATA } from "./TestDataService";
 import { DataCombiner, IProgress } from "../src/DataCombiner";
@@ -284,13 +284,17 @@ const COMPILED_MENU: ICompiledMenu = {
 
 describe('DataCombiner', () => {
     it('should return valid menu', async () => {
+        const unsubscribe$ = new Subject<void>();
+
+        const resourcesCount = 5;
+
         const menu = await new Promise((resolve, reject) => {
             const service = new TestDataService();
             const progress: IProgress = {
-                total: 10,
+                total: resourcesCount,
                 current: 0,
             };
-            
+
             const dataCombiner = new DataCombiner({
                 assetsTransformer: (assets: Array<IAsset>) => {
                     return {
@@ -300,28 +304,28 @@ describe('DataCombiner', () => {
                                 return of(assets);
                             }),
                         ),
-                        onProgress: interval(50).pipe(
-                            take(10),
+                        onProgress: interval(10).pipe(
+                            take(resourcesCount),
                             switchMap(() => {
-                                progress.current ++;
+                                progress.current++;
                                 return of(progress);
-                            })
-                        )
+                            }),
+                        ),
                     };
                 },
                 dataService: service,
-                updateTimeout: 99999999,
+                updateTimeout: 100,
             });
 
-            dataCombiner.onChange.pipe(
-                take(1),
-            ).subscribe(
+            dataCombiner.onChange.subscribe(
                 data => {
 
                     fs.writeFileSync("output/compiledMenu.json", JSON.stringify(data.menu));
                     fs.writeFileSync("output/compiledMenuReference.json", JSON.stringify(COMPILED_MENU));
 
                     resolve(data.menu);
+
+                    dataCombiner.dispose();
                 },
                 err => {
                     reject(err);
@@ -336,5 +340,68 @@ describe('DataCombiner', () => {
         });
 
         expect(JSON.stringify(menu)).to.equal(JSON.stringify(COMPILED_MENU));
+    });
+
+    it('should update menu', async () => {
+        const unsubscribe$ = new Subject<void>();
+
+        const resourcesCount = 3;
+        
+        const ACTUAL_UPDATE_COUNT = 2;
+        let updateCount = 0;
+
+        const menu = await new Promise((resolve, reject) => {
+            const service = new TestDataService();
+            const progress: IProgress = {
+                total: resourcesCount,
+                current: 0,
+            };
+
+            const dataCombiner = new DataCombiner({
+                assetsTransformer: (assets: Array<IAsset>) => {
+                    return {
+                        onComplete: interval(1000).pipe(
+                            take(1),
+                            switchMap(() => {
+                                return of(assets);
+                            }),
+                        ),
+                        onProgress: interval(10).pipe(
+                            take(resourcesCount),
+                            switchMap(() => {
+                                progress.current++;
+                                return of(progress);
+                            }),
+                        ),
+                    };
+                },
+                dataService: service,
+                updateTimeout: 100,
+            });
+
+            dataCombiner.onChange.subscribe(
+                data => {
+                    updateCount++;
+
+                    if (updateCount === 2) {
+                        console.log(data.refs);
+                        resolve(data.refs);
+
+                        dataCombiner.dispose();
+                    }
+                },
+                err => {
+                    reject(err);
+                }
+            );
+
+            dataCombiner.onProgress.subscribe(progress => {
+                console.log(progress);
+            });
+
+            dataCombiner.init();
+        });
+
+        expect(updateCount).to.equal(ACTUAL_UPDATE_COUNT);
     });
 });

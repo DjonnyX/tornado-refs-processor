@@ -68,10 +68,9 @@ export class DataCombiner {
                         }),
                     )
                 } else {
-                    of(null)
+                    of(null);
                 }
-            }
-            ),
+            }),
         ).subscribe(
             refs => {
                 if (!!refs) {
@@ -132,6 +131,16 @@ export class DataCombiner {
             this._unsubscribe$.next();
             this._unsubscribe$.complete();
             this._unsubscribe$ = null;
+        }
+
+        if (!!this._onChange) {
+            this._onChange.unsubscribe();
+            this._onChange = null;
+        }
+
+        if (!!this._onProgress) {
+            this._onProgress.unsubscribe();
+            this._onProgress = null;
         }
 
         clearTimeout(this._delayer);

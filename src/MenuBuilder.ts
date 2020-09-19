@@ -217,9 +217,9 @@ export class MenuBuilder {
 
         this._menu = this.buildMenuTree();
 
-        this._compiledLanguages = refs.languages.map(v => this.getCompiledLanguages(v.id));
+        this._compiledLanguages = refs.languages.map(v => this.getCompiledLanguages(v.code));
 
-        this._compiledDefaultLanguage = this.getCompiledLanguages(this._defaultLanguage.id);
+        this._compiledDefaultLanguage = this.getCompiledLanguages(this._defaultLanguage.code);
 
         this._compiledOrderTypes = refs.orderTypes.map(v => this.getCompiledOrderType(v.id));
 
@@ -385,8 +385,8 @@ export class MenuBuilder {
         return null;
     }
 
-    private getCompiledLanguages(id: string): ICompiledLanguage {
-        const lang = this._languagesDictionary[id];
+    private getCompiledLanguages(code: string): ICompiledLanguage {
+        const lang = this._languagesDictionary[code];
 
         if (!!lang) {
             const translation = this._translationsDictionary[lang.translation];
@@ -408,7 +408,7 @@ export class MenuBuilder {
                 name: lang.name,
                 assets: lang.assets.map(v => {
                     return this._assetsDictionary[v];
-                }),
+                }).filter(v => !!v),
                 resources: {
                     main: this._assetsDictionary[lang.resources.main],
                 },

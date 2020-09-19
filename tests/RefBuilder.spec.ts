@@ -20,6 +20,8 @@ describe('RefBuilder', () => {
 
                 fs.writeFileSync("output/refs.json", JSON.stringify(refs));
 
+                refBuilder.dispose();
+
                 resolve(refs);
             }, err => {
                 reject(err);
@@ -47,7 +49,5 @@ describe('RefBuilder', () => {
             currencies: CURRENCIES_DATA,
             ads: ADS_DATA,
         }));
-
-        refBuilder.dispose();
     });
 });

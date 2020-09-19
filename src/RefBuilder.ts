@@ -29,7 +29,7 @@ export class RefBuilder {
         ads: null,
     };
 
-    private _onChange = new Subject<IRefs>();
+    private _onChange = new Subject<IRefs | null>();
     public onChange = this._onChange.asObservable();
 
     private _initialProgressState: IProgress = {
@@ -67,7 +67,7 @@ export class RefBuilder {
         this._refs = null;
     }
 
-    get(): Observable<IRefs> {
+    get(): Observable<IRefs | null> {
         this._service.getRefs().pipe(
             take(1),
             takeUntil(this.unsubscribe$),
@@ -95,10 +95,10 @@ export class RefBuilder {
         return result;
     }
 
-    private checkForUpdateRefs(refsInfo: Array<IRef>): Observable<IRefs> {
+    private checkForUpdateRefs(refsInfo: Array<IRef> | null): void {
         if (!refsInfo) {
             this._onChange.next(null);
-            return of(null);
+            return;
         }
 
         let sequenceList = new Array<Observable<any>>();
@@ -127,8 +127,8 @@ export class RefBuilder {
         });
 
         if (sequenceList.length === 0) {
-            this._onChange.next(null);
-            return of(null);
+            this._onChange.next(this._refs);
+            return;
         }
 
         const refs = [];
@@ -159,8 +159,6 @@ export class RefBuilder {
                 }
             }
         );
-
-        return this.onChange;
     }
 
     private updateRefByName(refName: string): Observable<boolean> {
