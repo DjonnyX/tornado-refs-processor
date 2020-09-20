@@ -217,15 +217,15 @@ export class MenuBuilder {
 
         this._menu = this.buildMenuTree();
 
-        this._compiledLanguages = refs.languages.map(v => this.getCompiledLanguages(v.code));
+        this._compiledLanguages = refs.languages.filter(v => !!v && v.active).map(v => this.getCompiledLanguages(v.code));
 
         this._compiledDefaultLanguage = this.getCompiledLanguages(this._defaultLanguage.code);
 
-        this._compiledOrderTypes = refs.orderTypes.map(v => this.getCompiledOrderType(v.id));
+        this._compiledOrderTypes = refs.orderTypes.filter(v => !!v && v.active).map(v => this.getCompiledOrderType(v.id));
 
-        this._compiledTags = refs.tags.map(v => this._compiledTagsDictionary[v.id]);
+        this._compiledTags = refs.tags.filter(v => !!v && v.active).map(v => this._compiledTagsDictionary[v.id]);
 
-        this._compiledAds = refs.ads.map(v => this.getCompiledAd(v.id));
+        this._compiledAds = refs.ads.filter(v => !!v && v.active).map(v => this.getCompiledAd(v.id));
     }
 
     private buildMenuTree(): ICompiledMenu {
@@ -370,7 +370,7 @@ export class MenuBuilder {
     private getCompiledAd(id: string): ICompiledAd {
         const ad = this._adsDictionary[id];
 
-        if (!!ad) {
+        if (!!ad && ad.active) {
             const contents: ICompiledEntityContents<ICompiledAdContents> = getCompiledContents(ad.contents, this._refs.languages, this._defaultLanguage, this._assetsDictionary);
 
             return {
