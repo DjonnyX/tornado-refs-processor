@@ -1,4 +1,4 @@
-import { switchMap, map, takeUntil } from "rxjs/operators";
+import { switchMap, map, takeUntil, filter } from "rxjs/operators";
 import { of, Subject, Observable } from "rxjs";
 import { ICompiledData, IAsset, AdTypes, SelectorTypes } from "@djonnyx/tornado-types";
 import { RefBuilder } from "./RefBuilder";
@@ -20,9 +20,6 @@ export interface IProgress {
 }
 
 export class DataCombiner {
-
-    private static _current: DataCombiner;
-
     private _onChange = new Subject<ICompiledData>();
     readonly onChange = this._onChange.asObservable();
 
@@ -36,13 +33,7 @@ export class DataCombiner {
 
     private _delayer: any;
 
-    constructor(private options: IDataCombinerOptions) {
-        if (!!DataCombiner._current) {
-            throw Error("DataCombiner must have only one instance.");
-        }
-
-        DataCombiner._current = this;
-    }
+    constructor(private options: IDataCombinerOptions) { }
 
     init(): void {
         this._refBuilder = new RefBuilder(this.options.dataService);
@@ -68,7 +59,7 @@ export class DataCombiner {
                         }),
                     )
                 } else {
-                    of(null);
+                    return of(refs);
                 }
             }),
         ).subscribe(
@@ -94,6 +85,8 @@ export class DataCombiner {
                         },
                         menu: this._menuBuilder.menu,
                     });
+                } else {
+                    this._onChange.next(null);
                 }
 
                 this.getRefsDelayed();
@@ -144,7 +137,5 @@ export class DataCombiner {
         }
 
         clearTimeout(this._delayer);
-
-        DataCombiner._current = null;
     }
 }

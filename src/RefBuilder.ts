@@ -127,7 +127,7 @@ export class RefBuilder {
         });
 
         if (sequenceList.length === 0) {
-            this._onChange.next(this._refs);
+            this._onChange.next(null);
             return;
         }
 
@@ -156,6 +156,8 @@ export class RefBuilder {
 
                 if (needRebuild) {
                     this._onChange.next(this._refs);
+                } else {
+                    this._onChange.next(null);
                 }
             }
         );
@@ -177,9 +179,10 @@ export class RefBuilder {
             switchMap(res => {
                 if (res) {
                     this._refs[refName] = res;
+                    return of(true);
                 }
 
-                return of(true);
+                return of(false);
             }),
         );
     }

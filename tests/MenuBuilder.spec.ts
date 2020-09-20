@@ -284,8 +284,6 @@ const COMPILED_MENU: ICompiledMenu = {
 
 describe('DataCombiner', () => {
     it('should return valid menu', async () => {
-        const unsubscribe$ = new Subject<void>();
-
         const resourcesCount = 5;
 
         const menu = await new Promise((resolve, reject) => {
@@ -343,6 +341,67 @@ describe('DataCombiner', () => {
     });
 
     it('should update menu', async () => {
+        const resourcesCount = 3;
+        
+        const ACTUAL_UPDATE_COUNT = 2;
+        let updateCount = 0;
+
+        const menu = await new Promise((resolve, reject) => {
+            const service = new TestDataService();
+            const progress: IProgress = {
+                total: resourcesCount,
+                current: 0,
+            };
+
+            const dataCombiner = new DataCombiner({
+                assetsTransformer: (assets: Array<IAsset>) => {
+                    return {
+                        onComplete: interval(1000).pipe(
+                            take(1),
+                            switchMap(() => {
+                                return of(assets);
+                            }),
+                        ),
+                        onProgress: interval(10).pipe(
+                            take(resourcesCount),
+                            switchMap(() => {
+                                progress.current++;
+                                return of(progress);
+                            }),
+                        ),
+                    };
+                },
+                dataService: service,
+                updateTimeout: 100,
+            });
+
+            dataCombiner.onChange.subscribe(
+                data => {
+                    updateCount++;
+                    console.info(`pass: ${updateCount}`);
+
+                    if (updateCount === 2) {
+                        resolve(data?.refs);
+
+                        dataCombiner.dispose();
+                    }
+                },
+                err => {
+                    reject(err);
+                }
+            );
+
+            dataCombiner.onProgress.subscribe(progress => {
+                console.log(progress);
+            });
+
+            dataCombiner.init();
+        });
+
+        expect(updateCount).to.equal(ACTUAL_UPDATE_COUNT);
+    });
+
+    it('combinedData after second update must equal "null"', async () => {
         const unsubscribe$ = new Subject<void>();
 
         const resourcesCount = 3;
@@ -382,10 +441,10 @@ describe('DataCombiner', () => {
             dataCombiner.onChange.subscribe(
                 data => {
                     updateCount++;
+                    console.info(`pass: ${updateCount}`);
 
                     if (updateCount === 2) {
-                        console.log(data.refs);
-                        resolve(data.refs);
+                        resolve(data);
 
                         dataCombiner.dispose();
                     }
@@ -402,6 +461,6 @@ describe('DataCombiner', () => {
             dataCombiner.init();
         });
 
-        expect(updateCount).to.equal(ACTUAL_UPDATE_COUNT);
+        expect(menu).to.equal(null);
     });
 });
