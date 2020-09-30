@@ -44,7 +44,14 @@ export class RefBuilder {
     private _onProgress = new BehaviorSubject<IProgress>(this.progressState);
     public onProgress = this._onProgress.asObservable();
 
-    constructor(private _service: IDataService) { }
+    constructor(private _service: IDataService, initialRefs?: IRefs) {
+        if (!!initialRefs) {
+            for (const refName in initialRefs) {
+                this._refsInfoDictionary[refName] = initialRefs[refName];
+            }
+            this._refs = initialRefs;
+        }
+    }
 
     dispose(): void {
         if (!!this.unsubscribe$) {
