@@ -8,6 +8,7 @@ import { DataCombiner, IProgress } from "../src/DataCombiner";
 
 const COMPILED_MENU: ICompiledMenu = {
     "id": "n1",
+    "index": 0,
     "active": true,
     "type": NodeTypes.KIOSK_ROOT,
     "parentId": null,
@@ -15,6 +16,7 @@ const COMPILED_MENU: ICompiledMenu = {
     "children": [
         {
             "id": "n2",
+            "index": 1,
             "active": true,
             "type": NodeTypes.SELECTOR,
             "parentId": "n1",
@@ -57,6 +59,7 @@ const COMPILED_MENU: ICompiledMenu = {
             "children": [
                 {
                     "id": "n3",
+                    "index": 2,
                     "active": true,
                     "type": NodeTypes.PRODUCT,
                     "parentId": "n2",
@@ -181,6 +184,7 @@ const COMPILED_MENU: ICompiledMenu = {
                 },
                 {
                     "id": "n4",
+                    "index": 3,
                     "active": true,
                     "type": NodeTypes.PRODUCT,
                     "parentId": "n2",

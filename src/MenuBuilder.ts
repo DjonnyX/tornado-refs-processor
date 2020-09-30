@@ -253,23 +253,27 @@ export class MenuBuilder {
         return this.buildNode(this._rootNode);
     }
 
-    private buildNode(node: INode): ICompiledMenuNode {
+    private buildNode(node: INode, extra: { index: number } = { index: 0 }): ICompiledMenuNode {
 
         const children = new Array<ICompiledMenuNode>();
 
+        const index = extra.index;
+
         for (const childId of node.children) {
+            extra.index++;
             if (!!this._nodesDictionary[childId] && this._nodesDictionary[childId].active) {
 
                 const content = this.getCompiledNodeContent(this._nodesDictionary[childId]);
 
                 if (!!content) {
-                    children.push(this.buildNode(this._nodesDictionary[childId]));
+                    children.push(this.buildNode(this._nodesDictionary[childId], extra));
                 }
             }
         }
 
         const menuNode: ICompiledMenuNode = {
             id: node.id,
+            index,
             active: node.active,
             type: node.type,
             parentId: node.parentId,
