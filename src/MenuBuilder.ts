@@ -135,10 +135,9 @@ export class MenuBuilder {
             if (language.active) {
                 if (language.isDefault) {
                     this._defaultLanguage = language;
-                } else
-                    if (!firstLanguage) {
-                        firstLanguage = language;
-                    }
+                } else if (!firstLanguage) {
+                    firstLanguage = language;
+                }
                 this._languagesDictionary[language.code] = language;
             }
         });
@@ -178,11 +177,10 @@ export class MenuBuilder {
             if (currency.active) {
                 if (currency.isDefault) {
                     this._defaultCurrecy = currency;
-                } else
-                    if (!firstCurrency) {
-                        firstCurrency = currency;
-                    }
-                this._currenciesDictionary[currency.code] = currency;
+                } else if (!firstCurrency) {
+                    firstCurrency = currency;
+                }
+                this._currenciesDictionary[currency.id] = currency;
             }
         });
 
@@ -324,17 +322,19 @@ export class MenuBuilder {
             const contents: ICompiledEntityContents<ICompiledProductContents> = getCompiledContents(product.contents, this._refs.languages, this._defaultLanguage, this._assetsDictionary);
 
             const prices: {
-                [currencyCode: string]: {
+                [currencyId: string]: {
                     currency: ICurrency;
                     value: number;
                 };
             } = {};
 
             for (const price of product.prices) {
-                prices[price.currency] = {
-                    currency: this._currenciesDictionary[price.currency],
-                    value: price.value,
-                };
+                if (!!this._currenciesDictionary[price.currency]) { // проверка активных валют
+                    prices[price.currency] = {
+                        currency: this._currenciesDictionary[price.currency],
+                        value: price.value,
+                    };
+                }
             }
 
             const tags = new Array<ICompiledTag>();

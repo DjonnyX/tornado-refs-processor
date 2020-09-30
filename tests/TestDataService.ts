@@ -353,6 +353,7 @@ export const TRANSLATIONS_DATA: Array<ITranslation> = [
 export const CURRENCIES_DATA: Array<ICurrency> = [
     {
         id: "507c7f79bcf86cd7994f6c0e",
+        isDefault: true,
         active: true,
         code: "RUB",
         name: "Рубль",
@@ -396,6 +397,7 @@ export const BUSINESS_PERIODS_DATA: Array<IBusinessPeriod> = [
 export const ORDER_TYPES_DATA: Array<IOrderType> = [
     {
         id: "507c7f79bcf86cd7994f6c0e",
+        isDefault: true,
         active: true,
         contents: {
             [LANGUAGES_DATA[0].code]: {
