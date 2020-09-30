@@ -28,6 +28,9 @@ export class MenuBuilder {
     private _defaultLanguage: ILanguage;
     get defaultLanguage(): ILanguage { return this._defaultLanguage; }
 
+    private _defaultCurrecy: ICurrency;
+    get defaultCurrecy(): ICurrency { return this._defaultCurrecy; }
+
     private _refs: IRefs;
 
     // compiled
@@ -46,6 +49,9 @@ export class MenuBuilder {
 
     private _compiledDefaultLanguage: ICompiledLanguage;
     get compiledDefaultLanguage(): ICompiledLanguage { return this._compiledDefaultLanguage; }
+
+    private _compiledDefaultCurrency: ICurrency;
+    get compiledDefaultCurrency(): ICurrency { return this._compiledDefaultCurrency; }
 
     private _compiledOrderTypes: Array<ICompiledOrderType>;
     get compiledOrderTypes(): Array<ICompiledOrderType> { return this._compiledOrderTypes; }
@@ -167,11 +173,26 @@ export class MenuBuilder {
             }
         });
 
+        let firstCurrency: ICurrency;
         refs.currencies.forEach(currency => {
             if (currency.active) {
-                this._currenciesDictionary[currency.id] = currency;
+                if (currency.isDefault) {
+                    this._defaultCurrecy = currency;
+                } else
+                    if (!firstCurrency) {
+                        firstCurrency = currency;
+                    }
+                this._currenciesDictionary[currency.code] = currency;
             }
         });
+
+        if (!this._defaultCurrecy) {
+            if (!firstCurrency) {
+                throw Error("Default currency not found.");
+            }
+
+            this._defaultCurrecy = firstCurrency;
+        }
 
         refs.businessPeriods.forEach(businessPeriod => {
             if (businessPeriod.active) {
@@ -220,6 +241,8 @@ export class MenuBuilder {
         this._compiledLanguages = refs.languages.filter(v => !!v && v.active).map(v => this.getCompiledLanguages(v.code));
 
         this._compiledDefaultLanguage = this.getCompiledLanguages(this._defaultLanguage.code);
+
+        this._compiledDefaultCurrency = this._defaultCurrecy;
 
         this._compiledOrderTypes = refs.orderTypes.filter(v => !!v && v.active).map(v => this.getCompiledOrderType(v.id));
 
