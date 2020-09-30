@@ -318,6 +318,7 @@ describe('DataCombiner', () => {
             dataCombiner.onChange.subscribe(
                 data => {
 
+                    fs.writeFileSync("output/combinedData.json", JSON.stringify(data));
                     fs.writeFileSync("output/compiledMenu.json", JSON.stringify(data.menu));
                     fs.writeFileSync("output/compiledMenuReference.json", JSON.stringify(COMPILED_MENU));
 
