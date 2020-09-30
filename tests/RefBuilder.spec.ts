@@ -20,9 +20,15 @@ describe('RefBuilder', () => {
 
                 fs.writeFileSync("output/refs.json", JSON.stringify(refs));
 
+                refBuilder.dispose();
+
                 resolve(refs);
             }, err => {
                 reject(err);
+            });
+            
+            refBuilder.onProgress.subscribe(progress => {
+                console.log(progress);
             });
 
             refBuilder.get();

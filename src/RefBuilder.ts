@@ -1,10 +1,15 @@
-import { Observable, of, forkJoin, Subject } from "rxjs";
-import { switchMap, takeUntil, take, catchError } from "rxjs/operators";
+import { Observable, of, concat, Subject, BehaviorSubject } from "rxjs";
+import { switchMap, takeUntil, take, catchError, map } from "rxjs/operators";
 import { IRef, IRefs } from "@djonnyx/tornado-types";
 import { IDataService } from "./IDataService";
 
+interface IProgress {
+    total: number;
+    current: number;
+}
+
 export class RefBuilder {
-    private _unsubscribe$ = new Subject<void>();
+    protected unsubscribe$ = new Subject<void>();
 
     private _refsInfoDictionary: { [refName: string]: IRef } = {};
 
@@ -24,16 +29,35 @@ export class RefBuilder {
         ads: null,
     };
 
-    private _onChange = new Subject<IRefs>();
+    private _onChange = new Subject<IRefs | null>();
     public onChange = this._onChange.asObservable();
 
-    constructor(private _service: IDataService) { }
+    private _initialProgressState: IProgress = {
+        total: 13,
+        current: 0,
+    }
+
+    protected progressState: IProgress = {
+        ...this._initialProgressState,
+    }
+
+    private _onProgress = new BehaviorSubject<IProgress>(this.progressState);
+    public onProgress = this._onProgress.asObservable();
+
+    constructor(private _service: IDataService, initialRefs?: IRefs) {
+        if (!!initialRefs) {
+            for (const refName in initialRefs) {
+                this._refsInfoDictionary[refName] = initialRefs[refName];
+            }
+            this._refs = initialRefs;
+        }
+    }
 
     dispose(): void {
-        if (!!this._unsubscribe$) {
-            this._unsubscribe$.next();
-            this._unsubscribe$.complete();
-            this._unsubscribe$ = null;
+        if (!!this.unsubscribe$) {
+            this.unsubscribe$.next();
+            this.unsubscribe$.complete();
+            this.unsubscribe$ = null;
         }
 
         if (!!this._onChange) {
@@ -41,14 +65,19 @@ export class RefBuilder {
             this._onChange = null;
         }
 
+        if (!!this._onProgress) {
+            this._onProgress.unsubscribe();
+            this._onProgress = null;
+        }
+
         this._refsInfoDictionary = null;
         this._refs = null;
     }
 
-    get(): Observable<IRefs> {
+    get(): Observable<IRefs | null> {
         this._service.getRefs().pipe(
             take(1),
-            takeUntil(this._unsubscribe$),
+            takeUntil(this.unsubscribe$),
         ).subscribe(res => {
             this.checkForUpdateRefs(res);
         });
@@ -73,13 +102,13 @@ export class RefBuilder {
         return result;
     }
 
-    private checkForUpdateRefs(refsInfo: Array<IRef>): Observable<IRefs> {
+    private checkForUpdateRefs(refsInfo: Array<IRef> | null): void {
         if (!refsInfo) {
             this._onChange.next(null);
-            return of(null);
+            return;
         }
 
-        let sequenceList = new Array<Observable<boolean>>();
+        let sequenceList = new Array<Observable<any>>();
 
         refsInfo.forEach(refInfo => {
             let refName: string;
@@ -106,24 +135,39 @@ export class RefBuilder {
 
         if (sequenceList.length === 0) {
             this._onChange.next(null);
-            return of(null);
+            return;
         }
 
-        forkJoin(sequenceList).subscribe(res => {
-            let needRebuild = false;
+        const refs = [];
 
-            res.forEach(val => {
-                if (val) {
-                    needRebuild = true;
+        this.progressState = {...this._initialProgressState};
+        this._onProgress.next(this.progressState);
+
+        concat(...sequenceList).subscribe(
+            (needUpdate) => {
+                this.progressState.current ++;
+                this._onProgress.next(this.progressState);
+                refs.push(needUpdate);
+            },
+            (err) => {
+                console.error(`Download ref error. ${err}`);
+            },
+            () => {
+                let needRebuild = false;
+
+                refs.forEach(val => {
+                    if (val) {
+                        needRebuild = true;
+                    }
+                });
+
+                if (needRebuild) {
+                    this._onChange.next(this._refs);
+                } else {
+                    this._onChange.next(null);
                 }
-            });
-
-            if (needRebuild) {
-                this._onChange.next(this._refs);
             }
-        });
-
-        return this.onChange;
+        );
     }
 
     private updateRefByName(refName: string): Observable<boolean> {
@@ -134,6 +178,7 @@ export class RefBuilder {
         }
 
         return req.pipe(
+            takeUntil(this.unsubscribe$),
             catchError(err => {
                 console.error(err);
                 return of(false);
@@ -141,9 +186,10 @@ export class RefBuilder {
             switchMap(res => {
                 if (res) {
                     this._refs[refName] = res;
+                    return of(true);
                 }
 
-                return of(true);
+                return of(false);
             }),
         );
     }
