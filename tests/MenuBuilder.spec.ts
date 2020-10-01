@@ -1,10 +1,18 @@
 import { expect } from 'chai';
 import * as fs from "fs";
 import { of, interval, Subject } from 'rxjs';
-import { take, switchMap, takeUntil } from 'rxjs/operators';
-import { IAsset, ICompiledMenu, SelectorTypes, NodeTypes } from '@djonnyx/tornado-types';
+import { take, switchMap } from 'rxjs/operators';
+import { IAsset, ICompiledMenu, SelectorTypes, NodeTypes, ICompiledMenuNode } from '@djonnyx/tornado-types';
 import { TestDataService, CURRENCIES_DATA, ASSETS_DATA, LANGUAGES_DATA } from "./TestDataService";
 import { DataCombiner, IProgress } from "../src/DataCombiner";
+
+const clearParentNodes = (node: ICompiledMenuNode): void => {
+    node.parent = null;
+
+    for (const child of node.children) {
+        clearParentNodes(child);
+    }
+}
 
 const COMPILED_MENU: ICompiledMenu = {
     "id": "n1",
@@ -12,6 +20,7 @@ const COMPILED_MENU: ICompiledMenu = {
     "active": true,
     "type": NodeTypes.KIOSK_ROOT,
     "parentId": null,
+    "parent": null,
     "content": null,
     "children": [
         {
@@ -20,6 +29,7 @@ const COMPILED_MENU: ICompiledMenu = {
             "active": true,
             "type": NodeTypes.SELECTOR,
             "parentId": "n1",
+            "parent": null,
             "content": {
                 "id": "s1",
                 "type": SelectorTypes.MENU_CATEGORY,
@@ -63,6 +73,7 @@ const COMPILED_MENU: ICompiledMenu = {
                     "active": true,
                     "type": NodeTypes.PRODUCT,
                     "parentId": "n2",
+                    "parent": null,
                     "content": {
                         "id": "p1",
                         "contents": {
@@ -188,6 +199,7 @@ const COMPILED_MENU: ICompiledMenu = {
                     "active": true,
                     "type": NodeTypes.PRODUCT,
                     "parentId": "n2",
+                    "parent": null,
                     "content": {
                         "id": "p2",
                         "contents": {
@@ -290,7 +302,7 @@ describe('DataCombiner', () => {
     it('should return valid menu', async () => {
         const resourcesCount = 5;
 
-        const menu = await new Promise((resolve, reject) => {
+        const menu = await new Promise<ICompiledMenu>((resolve, reject) => {
             const service = new TestDataService();
             const progress: IProgress = {
                 total: resourcesCount,
@@ -321,6 +333,9 @@ describe('DataCombiner', () => {
 
             dataCombiner.onChange.subscribe(
                 data => {
+
+                    // Нужно очистить parent's, иначе при выполнении JSON.stringify сгенерируется ошибка о циклических зависимостях
+                    clearParentNodes(data.menu);
 
                     fs.writeFileSync("output/combinedData.json", JSON.stringify(data));
                     fs.writeFileSync("output/compiledMenu.json", JSON.stringify(data.menu));

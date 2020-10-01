@@ -25,6 +25,8 @@ export class MenuBuilder {
     private _storesDictionary: { [id: string]: IStore };
     private _terminalsDictionary: { [id: string]: ITerminal };
 
+    private _compiledNodesDictionary: { [id: string]: ICompiledMenuNode };
+
     private _defaultLanguage: ILanguage;
     get defaultLanguage(): ILanguage { return this._defaultLanguage; }
 
@@ -250,7 +252,19 @@ export class MenuBuilder {
     }
 
     private buildMenuTree(): ICompiledMenu {
-        return this.buildNode(this._rootNode);
+        const menu = this.buildNode(this._rootNode);
+
+        this.setupParentNodes(menu);
+
+        return menu;
+    }
+
+    private setupParentNodes(node: ICompiledMenuNode): void {
+        node.parent = this._compiledNodesDictionary[node.parentId];
+
+        for (const child of node.children) {
+            this.setupParentNodes(child);
+        }
     }
 
     private buildNode(node: INode, extra: { index: number } = { index: 0 }): ICompiledMenuNode {
@@ -277,11 +291,14 @@ export class MenuBuilder {
             active: node.active,
             type: node.type,
             parentId: node.parentId,
+            parent: undefined,
             content: this.getCompiledNodeContent(node),
             children,
             scenarios: node.scenarios,
             extra: node.extra,
         };
+
+        this._compiledNodesDictionary[menuNode.id] = menuNode;
 
         return menuNode;
     }
@@ -474,6 +491,8 @@ export class MenuBuilder {
         this._storesDictionary = {};
         this._terminalsDictionary = {};
 
+        this._compiledNodesDictionary = {}
+
         // словари компилированных сущностей
         this._compiledSelectorsDictionary = {};
         this._compiledProductsDictionary = {};
@@ -506,6 +525,8 @@ export class MenuBuilder {
         this._orderTypesDictionary = null;
         this._storesDictionary = null;
         this._terminalsDictionary = null;
+
+        this._compiledNodesDictionary = null;
 
         this._compiledSelectorsDictionary = null;
         this._compiledProductsDictionary = null;
