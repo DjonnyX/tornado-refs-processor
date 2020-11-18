@@ -8,67 +8,67 @@ export const REFS_INFO_DATA: Array<IRef> = [
     {
         name: RefTypes.NODES,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.PRODUCTS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.SELECTORS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.TAGS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.ASSETS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.STORES,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.TERMINALS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.BUSINESS_PERIODS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.CURRENCIES,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.ORDER_TYPES,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.LANGUAGES,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.TRANSLATIONS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.ADS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
 ];
 
@@ -300,7 +300,7 @@ export const ASSETS_DATA: Array<IAsset> = [
         id: "a1",
         active: true,
         name: "asset_1.png",
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
         ext: ".png",
         path: "assets/a1",
         mipmap: {
@@ -312,7 +312,7 @@ export const ASSETS_DATA: Array<IAsset> = [
         id: "a2",
         active: true,
         name: "asset_2.png",
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
         ext: ".png",
         path: "assets/a2.png",
         mipmap: {
@@ -324,7 +324,7 @@ export const ASSETS_DATA: Array<IAsset> = [
         id: "a3",
         active: true,
         name: "asset_3.png",
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
         ext: ".png",
         path: "assets/a3.png",
         mipmap: {
