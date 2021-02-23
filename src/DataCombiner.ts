@@ -108,6 +108,7 @@ export class DataCombiner {
     }
 
     private getRefsDelayed(): void {
+        clearTimeout(this._delayer);
         this._delayer = setTimeout(() => { this._refBuilder.get(); }, this.options.updateTimeout);
     }
 
