@@ -1,7 +1,7 @@
 import {
     INode, IAsset, ISelector, IProduct, ITag, IRefs, NodeTypes, ICurrency, ITranslation, ILanguage,
     IBusinessPeriod, IOrderType, IStore, ITerminal, ICompiledMenu, ICompiledMenuNode, ICompiledSelector,
-    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents, ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd
+    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents, ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes
 } from "@djonnyx/tornado-types";
 import { getCompiledContents } from "./utils/getCompiledContents";
 import { ICompiledEntityContents } from "@djonnyx/tornado-types/dist/interfaces/ICompiledEntityContents";
@@ -73,7 +73,11 @@ export class MenuBuilder {
     private _menu: ICompiledMenu;
     get menu(): ICompiledMenu { return this._menu; }
 
-    build(refs: IRefs): void {
+    private _storeId: string;
+
+    build(storeId: string, refs: IRefs): void {
+        this._storeId = storeId;
+
         this.reset();
 
         this._refs = refs;
@@ -205,7 +209,7 @@ export class MenuBuilder {
                 this._businessPeriodsDictionary[businessPeriod.id] = businessPeriod;
             }
         });
-        
+
         let firstOrderType: IOrderType;
         refs.orderTypes.forEach(orderType => {
             if (orderType.active) {
@@ -294,6 +298,22 @@ export class MenuBuilder {
         }
     }
 
+    private getIsStoreContain(node: INode): boolean {
+        if (!!node && !!node.scenarios && node.scenarios.length > 0) {
+            for (let i = 0, l = node.scenarios.length; i < l; i++) {
+                const scenario = node.scenarios[i];
+
+                if (scenario.action === ScenarioCommonActionTypes.VISIBLE_BY_STORE) {
+                    const availableStores = scenario.value as Array<string>;
+
+                    return availableStores.indexOf(this._storeId) > -1;
+                }
+            }
+        }
+
+        return true;
+    }
+
     private buildNode(node: INode,
         nodesDictionary: { [id: string]: INode },
         extra: { index: number } = { index: 0 }): ICompiledMenuNode {
@@ -304,7 +324,9 @@ export class MenuBuilder {
 
         for (const childId of node.children) {
             extra.index++;
-            if (!!nodesDictionary[childId] && nodesDictionary[childId].active) {
+            const c = nodesDictionary[childId];
+            if (!!c && c.active &&
+                this.getIsStoreContain(c)) {
 
                 const content = this.getCompiledNodeContent(nodesDictionary[childId]);
 
