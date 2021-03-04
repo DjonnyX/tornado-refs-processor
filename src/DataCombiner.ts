@@ -73,7 +73,7 @@ export class DataCombiner {
                             languages: this._menuBuilder.compiledLanguages,
                             defaultLanguage: this._menuBuilder.compiledDefaultLanguage,
                             defaultCurrency: this._menuBuilder.compiledDefaultCurrency,
-                            defaultOrderType: undefined,
+                            defaultOrderType: this._menuBuilder.compiledDefaultOrderType,
                             tags: this._menuBuilder.compiledTags,
                             ads: {
                                 intros: this._menuBuilder.compiledAds.filter(v => v.type === AdTypes.INTRO),

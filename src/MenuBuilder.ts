@@ -30,6 +30,9 @@ export class MenuBuilder {
     private _defaultLanguage: ILanguage;
     get defaultLanguage(): ILanguage { return this._defaultLanguage; }
 
+    private _defaultOrderType: IOrderType;
+    get defaultOrderType(): IOrderType { return this._defaultOrderType; }
+
     private _defaultCurrecy: ICurrency;
     get defaultCurrecy(): ICurrency { return this._defaultCurrecy; }
 
@@ -54,6 +57,9 @@ export class MenuBuilder {
 
     private _compiledDefaultCurrency: ICurrency;
     get compiledDefaultCurrency(): ICurrency { return this._compiledDefaultCurrency; }
+
+    private _compiledDefaultOrderType: ICompiledOrderType;
+    get compiledDefaultOrderType(): ICompiledOrderType { return this._compiledDefaultOrderType; }
 
     private _compiledOrderTypes: Array<ICompiledOrderType>;
     get compiledOrderTypes(): Array<ICompiledOrderType> { return this._compiledOrderTypes; }
@@ -199,12 +205,26 @@ export class MenuBuilder {
                 this._businessPeriodsDictionary[businessPeriod.id] = businessPeriod;
             }
         });
-
+        
+        let firstOrderType: IOrderType;
         refs.orderTypes.forEach(orderType => {
             if (orderType.active) {
+                if (orderType.isDefault) {
+                    this._defaultOrderType = orderType;
+                } else if (!firstOrderType) {
+                    firstOrderType = orderType;
+                }
                 this._orderTypesDictionary[orderType.id] = orderType;
             }
         });
+
+        if (!this._defaultOrderType) {
+            if (!firstOrderType) {
+                throw Error("Default OrderType not found.");
+            }
+
+            this._defaultOrderType = firstOrderType;
+        }
 
         refs.ads.forEach(ad => {
             if (ad.active) {
@@ -250,6 +270,8 @@ export class MenuBuilder {
         this._compiledLanguages = refs.languages.filter(v => !!v && v.active).map(v => this.getCompiledLanguages(v.code));
 
         this._compiledDefaultLanguage = this.getCompiledLanguages(this._defaultLanguage.code);
+
+        this._compiledDefaultOrderType = this.getCompiledOrderType(this._defaultOrderType.id);
 
         this._compiledDefaultCurrency = this._defaultCurrecy;
 
