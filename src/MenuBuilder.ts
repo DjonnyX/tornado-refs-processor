@@ -219,10 +219,6 @@ export class MenuBuilder {
         });
 
         if (!this._defaultOrderType) {
-            if (!firstOrderType) {
-                throw Error("Default OrderType not found.");
-            }
-
             this._defaultOrderType = firstOrderType;
         }
 
