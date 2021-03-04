@@ -437,6 +437,7 @@ export class MenuBuilder {
 
             return {
                 id: orderType.id,
+                isDefault: orderType.isDefault,
                 contents,
                 extra: orderType.extra,
             };
