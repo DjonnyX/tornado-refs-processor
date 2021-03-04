@@ -236,7 +236,16 @@ export class MenuBuilder {
             }
         });
 
-        this._menu = this.buildMenuTree();
+        // Привязка структур продуктов
+        this._compiledProducts.forEach(product => {
+            const baseProduct = this._productsDictionary[product.id];
+            const jointNode = this._nodesDictionary[baseProduct.joint];
+            if (!!jointNode) {
+                product.structure = this.buildMenuTree(jointNode);
+            }
+        });
+
+        this._menu = this.buildMenuTree(this._rootNode);
 
         this._compiledLanguages = refs.languages.filter(v => !!v && v.active).map(v => this.getCompiledLanguages(v.code));
 
@@ -251,23 +260,25 @@ export class MenuBuilder {
         this._compiledAds = refs.ads.filter(v => !!v && v.active).map(v => this.getCompiledAd(v.id));
     }
 
-    private buildMenuTree(): ICompiledMenu {
-        const menu = this.buildNode(this._rootNode);
+    private buildMenuTree(rootNode: INode): ICompiledMenu {
+        const menu = this.buildNode(rootNode, this._nodesDictionary);
 
-        this.setupParentNodes(menu);
+        this.setupParentNodes(menu, this._compiledNodesDictionary);
 
         return menu;
     }
 
-    private setupParentNodes(node: ICompiledMenuNode): void {
-        node.parent = this._compiledNodesDictionary[node.parentId];
+    private setupParentNodes(node: ICompiledMenuNode, dictionary: { [id: string]: ICompiledMenuNode }): void {
+        node.parent = dictionary[node.parentId];
 
         for (const child of node.children) {
-            this.setupParentNodes(child);
+            this.setupParentNodes(child, dictionary);
         }
     }
 
-    private buildNode(node: INode, extra: { index: number } = { index: 0 }): ICompiledMenuNode {
+    private buildNode(node: INode,
+        nodesDictionary: { [id: string]: INode },
+        extra: { index: number } = { index: 0 }): ICompiledMenuNode {
 
         const children = new Array<ICompiledMenuNode>();
 
@@ -275,12 +286,12 @@ export class MenuBuilder {
 
         for (const childId of node.children) {
             extra.index++;
-            if (!!this._nodesDictionary[childId] && this._nodesDictionary[childId].active) {
+            if (!!nodesDictionary[childId] && nodesDictionary[childId].active) {
 
-                const content = this.getCompiledNodeContent(this._nodesDictionary[childId]);
+                const content = this.getCompiledNodeContent(nodesDictionary[childId]);
 
                 if (!!content) {
-                    children.push(this.buildNode(this._nodesDictionary[childId], extra));
+                    children.push(this.buildNode(nodesDictionary[childId], nodesDictionary, extra));
                 }
             }
         }
@@ -372,6 +383,7 @@ export class MenuBuilder {
                 prices,
                 tags,
                 minPrices: {},
+                structure: undefined,
                 extra: product.extra,
             };
         }

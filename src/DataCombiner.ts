@@ -108,24 +108,31 @@ export class DataCombiner {
     }
 
     private getRefsDelayed(): void {
-        this._delayer = setTimeout(() => { this._refBuilder.get(); }, this.options.updateTimeout);
+        clearTimeout(this._delayer);
+        this._delayer = setTimeout(() => {
+            if (!!this._refBuilder) {
+                this._refBuilder.get();
+            }
+        }, this.options.updateTimeout);
     }
 
     dispose(): void {
-        if (!this._refBuilder) {
-            this._refBuilder.dispose();
-            this._refBuilder = null;
-        }
-
-        if (!this._menuBuilder) {
-            this._menuBuilder.dispose();
-            this._menuBuilder = null;
-        }
+        clearTimeout(this._delayer);
 
         if (!!this._unsubscribe$) {
             this._unsubscribe$.next();
             this._unsubscribe$.complete();
             this._unsubscribe$ = null;
+        }
+
+        if (!!this._refBuilder) {
+            this._refBuilder.dispose();
+            this._refBuilder = null;
+        }
+
+        if (!!this._menuBuilder) {
+            this._menuBuilder.dispose();
+            this._menuBuilder = null;
         }
 
         if (!!this._onChange) {
@@ -137,7 +144,5 @@ export class DataCombiner {
             this._onProgress.unsubscribe();
             this._onProgress = null;
         }
-
-        clearTimeout(this._delayer);
     }
 }

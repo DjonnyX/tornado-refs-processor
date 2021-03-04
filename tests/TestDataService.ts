@@ -138,6 +138,36 @@ export const NODES_DATA: Array<INode> = [
         scenarios: [],
         extra: { key: "value" },
     },
+    {
+        id: "j1",
+        active: true,
+        type: NodeTypes.SELECTOR_JOINT,
+        parentId: null,
+        contentId: null,
+        children: ["j2"],
+        scenarios: [],
+        extra: { key: "value" },
+    },
+    {
+        id: "j2",
+        active: true,
+        type: NodeTypes.SELECTOR,
+        parentId: "j1",
+        contentId: "sm1",
+        children: ["j3"],
+        scenarios: [],
+        extra: { key: "value" },
+    },
+    {
+        id: "j3",
+        active: true,
+        type: NodeTypes.PRODUCT,
+        parentId: "j2",
+        contentId: "p3",
+        children: [],
+        scenarios: [],
+        extra: { key: "value" },
+    },
 ];
 
 export const SELECTORS_DATA: Array<ISelector> = [
@@ -166,6 +196,24 @@ export const SELECTORS_DATA: Array<ISelector> = [
         contents: {
             [LANGUAGES_DATA[0].code]: {
                 name: "selector 2",
+                description: "",
+                color: "0xff00ff",
+                resources: {
+                    main: "a1",
+                    icon: "a2",
+                },
+                assets: ["a1", "a2"],
+            }
+        },
+        extra: { key: "value" },
+    },
+    {
+        id: "sm1",
+        active: true,
+        type: SelectorTypes.SCHEMA_CATEGORY,
+        contents: {
+            [LANGUAGES_DATA[0].code]: {
+                name: "Choose a product",
                 description: "",
                 color: "0xff00ff",
                 resources: {
@@ -214,6 +262,7 @@ export const PRODUCTS_DATA: Array<IProduct> = [
         extra: { key: "value" },
         tags: ["t1", "t2"],
         receipt: [],
+        joint: "j1",
     },
     {
         id: "p2",
@@ -221,6 +270,30 @@ export const PRODUCTS_DATA: Array<IProduct> = [
         contents: {
             [LANGUAGES_DATA[0].code]: {
                 name: "product 2",
+                description: "",
+                color: "0xff00ff",
+                resources: {
+                    main: "a3",
+                    icon: "a2",
+                },
+                assets: ["a3", "a2"],
+                gallery: [],
+            }
+        },
+        prices: [{
+            currency: "507c7f79bcf86cd7994f6c0e",
+            value: 10000,
+        }],
+        extra: { key: "value" },
+        tags: ["t3"],
+        receipt: [],
+    },
+    {
+        id: "p3",
+        active: true,
+        contents: {
+            [LANGUAGES_DATA[0].code]: {
+                name: "modifier",
                 description: "",
                 color: "0xff00ff",
                 resources: {
@@ -447,17 +520,8 @@ export const ADS_DATA: Array<IAd> = [
 export const STORES_DATA: Array<IStore> = [
     {
         id: "507c7f79bcf86cd7994f6c0e",
-        active: true,
         name: "My store",
         address: "Moscow",
-        terminals: [
-            "a0830860-d869-4d31-837f-122097f75f4a",
-            "2aff85fb-2316-4554-869c-df2ecd9126e9",
-        ],
-        employes: [
-            "a0830860-d869-4d31-837f-122097f75f4a",
-            "2aff85fb-2316-4554-869c-df2ecd9126e9",
-        ],
         extra: {
             key: "value",
         },
