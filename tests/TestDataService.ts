@@ -8,67 +8,67 @@ export const REFS_INFO_DATA: Array<IRef> = [
     {
         name: RefTypes.NODES,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.PRODUCTS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.SELECTORS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.TAGS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.ASSETS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.STORES,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.TERMINALS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.BUSINESS_PERIODS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.CURRENCIES,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.ORDER_TYPES,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.LANGUAGES,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.TRANSLATIONS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
     {
         name: RefTypes.ADS,
         version: 1,
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
     },
 ];
 
@@ -138,6 +138,36 @@ export const NODES_DATA: Array<INode> = [
         scenarios: [],
         extra: { key: "value" },
     },
+    {
+        id: "j1",
+        active: true,
+        type: NodeTypes.SELECTOR_JOINT,
+        parentId: null,
+        contentId: null,
+        children: ["j2"],
+        scenarios: [],
+        extra: { key: "value" },
+    },
+    {
+        id: "j2",
+        active: true,
+        type: NodeTypes.SELECTOR,
+        parentId: "j1",
+        contentId: "sm1",
+        children: ["j3"],
+        scenarios: [],
+        extra: { key: "value" },
+    },
+    {
+        id: "j3",
+        active: true,
+        type: NodeTypes.PRODUCT,
+        parentId: "j2",
+        contentId: "p3",
+        children: [],
+        scenarios: [],
+        extra: { key: "value" },
+    },
 ];
 
 export const SELECTORS_DATA: Array<ISelector> = [
@@ -166,6 +196,24 @@ export const SELECTORS_DATA: Array<ISelector> = [
         contents: {
             [LANGUAGES_DATA[0].code]: {
                 name: "selector 2",
+                description: "",
+                color: "0xff00ff",
+                resources: {
+                    main: "a1",
+                    icon: "a2",
+                },
+                assets: ["a1", "a2"],
+            }
+        },
+        extra: { key: "value" },
+    },
+    {
+        id: "sm1",
+        active: true,
+        type: SelectorTypes.SCHEMA_CATEGORY,
+        contents: {
+            [LANGUAGES_DATA[0].code]: {
+                name: "Choose a product",
                 description: "",
                 color: "0xff00ff",
                 resources: {
@@ -214,6 +262,7 @@ export const PRODUCTS_DATA: Array<IProduct> = [
         extra: { key: "value" },
         tags: ["t1", "t2"],
         receipt: [],
+        joint: "j1",
     },
     {
         id: "p2",
@@ -221,6 +270,30 @@ export const PRODUCTS_DATA: Array<IProduct> = [
         contents: {
             [LANGUAGES_DATA[0].code]: {
                 name: "product 2",
+                description: "",
+                color: "0xff00ff",
+                resources: {
+                    main: "a3",
+                    icon: "a2",
+                },
+                assets: ["a3", "a2"],
+                gallery: [],
+            }
+        },
+        prices: [{
+            currency: "507c7f79bcf86cd7994f6c0e",
+            value: 10000,
+        }],
+        extra: { key: "value" },
+        tags: ["t3"],
+        receipt: [],
+    },
+    {
+        id: "p3",
+        active: true,
+        contents: {
+            [LANGUAGES_DATA[0].code]: {
+                name: "modifier",
                 description: "",
                 color: "0xff00ff",
                 resources: {
@@ -300,7 +373,7 @@ export const ASSETS_DATA: Array<IAsset> = [
         id: "a1",
         active: true,
         name: "asset_1.png",
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
         ext: ".png",
         path: "assets/a1",
         mipmap: {
@@ -312,7 +385,7 @@ export const ASSETS_DATA: Array<IAsset> = [
         id: "a2",
         active: true,
         name: "asset_2.png",
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
         ext: ".png",
         path: "assets/a2.png",
         mipmap: {
@@ -324,7 +397,7 @@ export const ASSETS_DATA: Array<IAsset> = [
         id: "a3",
         active: true,
         name: "asset_3.png",
-        lastupdate: currentTestDate,
+        lastUpdate: currentTestDate,
         ext: ".png",
         path: "assets/a3.png",
         mipmap: {
@@ -447,17 +520,8 @@ export const ADS_DATA: Array<IAd> = [
 export const STORES_DATA: Array<IStore> = [
     {
         id: "507c7f79bcf86cd7994f6c0e",
-        active: true,
         name: "My store",
         address: "Moscow",
-        terminals: [
-            "a0830860-d869-4d31-837f-122097f75f4a",
-            "2aff85fb-2316-4554-869c-df2ecd9126e9",
-        ],
-        employes: [
-            "a0830860-d869-4d31-837f-122097f75f4a",
-            "2aff85fb-2316-4554-869c-df2ecd9126e9",
-        ],
         extra: {
             key: "value",
         },
@@ -467,11 +531,14 @@ export const STORES_DATA: Array<IStore> = [
 export const TERMINALS_DATA: Array<ITerminal> = [
     {
         id: "507c7f79bcf86cd7994f6c0e",
+        clientId: "507c7f79bcf86cd7994f6c0e",
         status: TerminalStatusTypes.ONLINE,
         type: TerminalTypes.KIOSK,
         name: "My terminal",
-        store: STORES_DATA[0].id,
+        storeId: STORES_DATA[0].id,
         lastwork: new Date(),
+        imei: "333-111-000",
+        licenseId: "507c7f79bcf86cd7994f6c0e",
         extra: {
             key: "value",
         },

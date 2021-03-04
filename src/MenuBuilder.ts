@@ -25,6 +25,8 @@ export class MenuBuilder {
     private _storesDictionary: { [id: string]: IStore };
     private _terminalsDictionary: { [id: string]: ITerminal };
 
+    private _compiledNodesDictionary: { [id: string]: ICompiledMenuNode };
+
     private _defaultLanguage: ILanguage;
     get defaultLanguage(): ILanguage { return this._defaultLanguage; }
 
@@ -234,7 +236,16 @@ export class MenuBuilder {
             }
         });
 
-        this._menu = this.buildMenuTree();
+        // Привязка структур продуктов
+        this._compiledProducts.forEach(product => {
+            const baseProduct = this._productsDictionary[product.id];
+            const jointNode = this._nodesDictionary[baseProduct.joint];
+            if (!!jointNode) {
+                product.structure = this.buildMenuTree(jointNode);
+            }
+        });
+
+        this._menu = this.buildMenuTree(this._rootNode);
 
         this._compiledLanguages = refs.languages.filter(v => !!v && v.active).map(v => this.getCompiledLanguages(v.code));
 
@@ -249,35 +260,56 @@ export class MenuBuilder {
         this._compiledAds = refs.ads.filter(v => !!v && v.active).map(v => this.getCompiledAd(v.id));
     }
 
-    private buildMenuTree(): ICompiledMenu {
-        return this.buildNode(this._rootNode);
+    private buildMenuTree(rootNode: INode): ICompiledMenu {
+        const menu = this.buildNode(rootNode, this._nodesDictionary);
+
+        this.setupParentNodes(menu, this._compiledNodesDictionary);
+
+        return menu;
     }
 
-    private buildNode(node: INode): ICompiledMenuNode {
+    private setupParentNodes(node: ICompiledMenuNode, dictionary: { [id: string]: ICompiledMenuNode }): void {
+        node.parent = dictionary[node.parentId];
+
+        for (const child of node.children) {
+            this.setupParentNodes(child, dictionary);
+        }
+    }
+
+    private buildNode(node: INode,
+        nodesDictionary: { [id: string]: INode },
+        extra: { index: number } = { index: 0 }): ICompiledMenuNode {
 
         const children = new Array<ICompiledMenuNode>();
 
-        for (const childId of node.children) {
-            if (!!this._nodesDictionary[childId] && this._nodesDictionary[childId].active) {
+        const index = extra.index;
 
-                const content = this.getCompiledNodeContent(this._nodesDictionary[childId]);
+        for (const childId of node.children) {
+            extra.index++;
+            if (!!nodesDictionary[childId] && nodesDictionary[childId].active) {
+
+                const content = this.getCompiledNodeContent(nodesDictionary[childId]);
 
                 if (!!content) {
-                    children.push(this.buildNode(this._nodesDictionary[childId]));
+                    children.push(this.buildNode(nodesDictionary[childId], nodesDictionary, extra));
                 }
             }
         }
 
         const menuNode: ICompiledMenuNode = {
             id: node.id,
+            index,
             active: node.active,
             type: node.type,
             parentId: node.parentId,
+            parent: undefined,
             content: this.getCompiledNodeContent(node),
             children,
             scenarios: node.scenarios,
             extra: node.extra,
         };
+
+        this._compiledNodesDictionary[menuNode.id] = menuNode;
 
         return menuNode;
     }
@@ -351,6 +383,7 @@ export class MenuBuilder {
                 prices,
                 tags,
                 minPrices: {},
+                structure: undefined,
                 extra: product.extra,
             };
         }
@@ -470,6 +503,8 @@ export class MenuBuilder {
         this._storesDictionary = {};
         this._terminalsDictionary = {};
 
+        this._compiledNodesDictionary = {}
+
         // словари компилированных сущностей
         this._compiledSelectorsDictionary = {};
         this._compiledProductsDictionary = {};
@@ -502,6 +537,8 @@ export class MenuBuilder {
         this._orderTypesDictionary = null;
         this._storesDictionary = null;
         this._terminalsDictionary = null;
+
+        this._compiledNodesDictionary = null;
 
         this._compiledSelectorsDictionary = null;
         this._compiledProductsDictionary = null;
