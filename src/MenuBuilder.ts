@@ -267,7 +267,7 @@ export class MenuBuilder {
 
         this._compiledDefaultLanguage = this.getCompiledLanguages(this._defaultLanguage.code);
 
-        this._compiledDefaultOrderType = this.getCompiledOrderType(this._defaultOrderType.id);
+        this._compiledDefaultOrderType = !!this._defaultOrderType ? this.getCompiledOrderType(this._defaultOrderType.id) : undefined;
 
         this._compiledDefaultCurrency = this._defaultCurrecy;
 
