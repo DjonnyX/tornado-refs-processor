@@ -519,7 +519,7 @@ describe('DataCombiner', () => {
                 console.log(progress);
             });
 
-            dataCombiner.init();
+            dataCombiner.init("1");
         });
 
         expect(JSON.stringify(menu)).to.equal(JSON.stringify(COMPILED_MENU));
@@ -580,7 +580,7 @@ describe('DataCombiner', () => {
                 console.log(progress);
             });
 
-            dataCombiner.init();
+            dataCombiner.init("1");
         });
 
         expect(updateCount).to.equal(ACTUAL_UPDATE_COUNT);
@@ -643,7 +643,7 @@ describe('DataCombiner', () => {
                 console.log(progress);
             });
 
-            dataCombiner.init();
+            dataCombiner.init("1");
         });
 
         expect(menu).to.equal(null);

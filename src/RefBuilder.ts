@@ -1,5 +1,5 @@
 import { Observable, of, concat, Subject, BehaviorSubject } from "rxjs";
-import { switchMap, takeUntil, take, catchError, map } from "rxjs/operators";
+import { switchMap, takeUntil, take, catchError } from "rxjs/operators";
 import { IRef, IRefs } from "@djonnyx/tornado-types";
 import { IDataService } from "./IDataService";
 
