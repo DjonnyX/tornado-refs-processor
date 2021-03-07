@@ -1,16 +1,16 @@
 import { expect } from 'chai';
 import * as fs from "fs";
 import {
-    TestDataService, NODES_DATA, SELECTORS_DATA, PRODUCTS_DATA, TAGS_DATA, ASSETS_DATA, LANGUAGES_DATA,
+    TestDataSimpleMenuService, NODES_DATA, SELECTORS_DATA, PRODUCTS_DATA, TAGS_DATA, ASSETS_DATA, LANGUAGES_DATA,
     TRANSLATIONS_DATA, STORES_DATA, TERMINALS_DATA, BUSINESS_PERIODS_DATA, ORDER_TYPES_DATA, CURRENCIES_DATA,
     ADS_DATA
-} from "./TestDataService";
+} from "./TestDataSimpleMenuService";
 import { RefBuilder } from "../src/RefBuilder";
 import { take } from 'rxjs/operators';
 
 describe('RefBuilder', () => {
     it('should return valid refs', async () => {
-        const service = new TestDataService();
+        const service = new TestDataSimpleMenuService();
         const refBuilder = new RefBuilder(service);
 
         const refs = await new Promise((resolve, reject) => {

@@ -2,11 +2,14 @@ import { deepMergeObjects, deepClone } from "./object";
 import { normalizeEntityContents } from "./entity";
 import { IAsset, ILanguage } from "@djonnyx/tornado-types";
 
-export const getCompiledContents = (contents: any, languages: Array<ILanguage>, defaultLanguage: ILanguage, assetsDictionary: { [id: string]: IAsset }) => {
+export const getCompiledContents = (contents: any, languages: Array<ILanguage>, defaultLanguage: ILanguage,
+    assetsDictionary: { [id: string]: IAsset }) => {
     const result = {};
     for (const lang in contents) {
         // переопределение контента для разных языков
-        result[lang] = lang === defaultLanguage.code ? deepClone(contents[lang]) : deepMergeObjects(contents[defaultLanguage.code], contents[lang]);
+        result[lang] = lang === defaultLanguage.code
+            ? deepClone(contents[lang])
+            : deepMergeObjects(contents[defaultLanguage.code], contents[lang]);
     }
 
     // добовление контента языков которых нет в базе
@@ -23,7 +26,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
     for (const lang in result) {
 
         // нормализация ассетов
-        if (!!result[lang].assets) {
+        if (!!result[lang]?.assets) {
             const normalizedAssets = new Array<IAsset>();
             for (const assetId of result[lang].assets) {
                 if (!!assetsDictionary[assetId]) {
@@ -34,7 +37,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
         }
 
         // нормализация галереи ресурсов
-        if (!!result[lang].gallery) {
+        if (!!result[lang]?.gallery) {
             const normalizedGallery = new Array<IAsset>();
             for (const assetId of result[lang].gallery) {
                 if (!!assetsDictionary[assetId]) {
@@ -45,7 +48,7 @@ export const getCompiledContents = (contents: any, languages: Array<ILanguage>, 
         }
 
         // нормализация ресурсов
-        if (!!result[lang].resources) {
+        if (!!result[lang]?.resources) {
             const normalizedResources = { ...result[lang].resources };
             for (const resourceType in result[lang].resources) {
                 if (!!assetsDictionary[result[lang].resources[resourceType]]) {
