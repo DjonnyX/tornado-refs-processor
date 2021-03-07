@@ -141,7 +141,7 @@ export const NODES_DATA: Array<INode> = [
     {
         id: "j1",
         active: true,
-        type: NodeTypes.SELECTOR_JOINT,
+        type: NodeTypes.PRODUCT_JOINT,
         parentId: null,
         contentId: null,
         children: ["j2"],
@@ -552,7 +552,7 @@ const request = (data: any) => {
     );
 }
 
-export class TestDataService {
+export class TestDataSimpleMenuService {
     getRefs(): Observable<Array<IRef>> {
         return request(REFS_INFO_DATA);
     };

@@ -1,7 +1,7 @@
 import {
     INode, IAsset, ISelector, IProduct, ITag, IRefs, NodeTypes, ICurrency, ITranslation, ILanguage,
     IBusinessPeriod, IOrderType, IStore, ITerminal, ICompiledMenu, ICompiledMenuNode, ICompiledSelector,
-    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents, ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes
+    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents, ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes, IScenario
 } from "@djonnyx/tornado-types";
 import { getCompiledContents } from "./utils/getCompiledContents";
 import { ICompiledEntityContents } from "@djonnyx/tornado-types/dist/interfaces/ICompiledEntityContents";
@@ -285,7 +285,7 @@ export class MenuBuilder {
     private buildMenuTree(rootNode: INode): ICompiledMenu {
         const menu = this.buildNode(rootNode, this._nodesDictionary);
 
-        this.setupParentNodes(menu, this._compiledNodesDictionary);
+        // this.setupParentNodes(menu, this._compiledNodesDictionary);
 
         return menu;
     }
@@ -317,39 +317,64 @@ export class MenuBuilder {
     private buildNode(node: INode,
         nodesDictionary: { [id: string]: INode },
         extra: { index: number } = { index: 0 }): ICompiledMenuNode {
+        let menuNode: ICompiledMenuNode;
+        const existsCompiledMenuNode = this._compiledNodesDictionary[node.id];
+        if (!!existsCompiledMenuNode) {
+            menuNode = existsCompiledMenuNode;
+        } else {
 
-        const children = new Array<ICompiledMenuNode>();
+            const children = new Array<ICompiledMenuNode>();
 
-        const index = extra.index;
+            const index = extra.index;
 
-        for (const childId of node.children) {
-            extra.index++;
-            const c = nodesDictionary[childId];
-            if (!!c && c.active &&
-                this.getIsStoreContain(c)) {
+            for (const childId of node.children) {
+                extra.index++;
+                const c = nodesDictionary[childId];
+                if (!!c && c.active &&
+                    this.getIsStoreContain(c)) {
 
-                const content = this.getCompiledNodeContent(nodesDictionary[childId]);
+                    let n: INode;
+                    switch (c.type) {
+                        case NodeTypes.SELECTOR:
+                        case NodeTypes.SELECTOR_JOINT:
+                        case NodeTypes.PRODUCT: {
+                            n = c;
+                            break;
+                        }
+                        case NodeTypes.SELECTOR_NODE: {
+                            const nodeInstance = nodesDictionary[c.contentId];
+                            if (!!nodeInstance) {
+                                n = nodeInstance;
+                            }
+                            break;
+                        }
+                    }
 
-                if (!!content) {
-                    children.push(this.buildNode(nodesDictionary[childId], nodesDictionary, extra));
+                    if (!!n) {
+                        const content = this.getCompiledNodeContent(n);
+
+                        if (!!content) {
+                            children.push(this.buildNode(n, nodesDictionary, extra));
+                        }
+                    }
                 }
             }
+
+            menuNode = {
+                id: node.id,
+                index,
+                active: node.active,
+                type: node.type,
+                parentId: node.parentId,
+                parent: undefined,
+                content: this.getCompiledNodeContent(node),
+                children,
+                scenarios: node.scenarios,
+                extra: node.extra,
+            };
+
+            this._compiledNodesDictionary[menuNode.id] = menuNode;
         }
-
-        const menuNode: ICompiledMenuNode = {
-            id: node.id,
-            index,
-            active: node.active,
-            type: node.type,
-            parentId: node.parentId,
-            parent: undefined,
-            content: this.getCompiledNodeContent(node),
-            children,
-            scenarios: node.scenarios,
-            extra: node.extra,
-        };
-
-        this._compiledNodesDictionary[menuNode.id] = menuNode;
 
         return menuNode;
     }
@@ -357,11 +382,24 @@ export class MenuBuilder {
     private getCompiledNodeContent(node: INode): ICompiledSelector | ICompiledProduct | null {
         if (node) {
             switch (node.type) {
-                case NodeTypes.SELECTOR: {
-                    return this._selectorsDictionary[node.contentId] ? this._compiledSelectorsDictionary[node.contentId] : undefined;
+                case NodeTypes.SELECTOR:
+                case NodeTypes.SELECTOR_JOINT: {
+                    return this._selectorsDictionary[node.contentId]
+                        ? this._compiledSelectorsDictionary[node.contentId]
+                        : undefined;
+                }
+                case NodeTypes.SELECTOR_NODE: {
+                    const nodeInstance = this._nodesDictionary[node.contentId];
+                    if (!!nodeInstance) {
+                        return this._selectorsDictionary[nodeInstance.contentId]
+                            ? this._compiledSelectorsDictionary[nodeInstance.contentId]
+                            : undefined;
+                    }
                 }
                 case NodeTypes.PRODUCT: {
-                    return this._productsDictionary[node.contentId] ? this._compiledProductsDictionary[node.contentId] : undefined;
+                    return this._productsDictionary[node.contentId]
+                        ? this._compiledProductsDictionary[node.contentId]
+                        : undefined;
                 }
             }
         }
