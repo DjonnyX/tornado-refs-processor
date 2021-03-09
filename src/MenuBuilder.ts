@@ -336,9 +336,18 @@ export class MenuBuilder {
                     let n: INode;
                     switch (c.type) {
                         case NodeTypes.SELECTOR:
-                        case NodeTypes.SELECTOR_JOINT:
-                        case NodeTypes.PRODUCT: {
+                        case NodeTypes.SELECTOR_JOINT: {
                             n = c;
+                            break;
+                        }
+                        case NodeTypes.PRODUCT: {
+                            const baseProduct = this._productsDictionary[c.contentId];
+                            const jointNode = this._nodesDictionary[baseProduct.joint];
+                            if (!!jointNode) {
+                                n = { ...c, scenarios: [...(jointNode.scenarios || []), ...(c.scenarios || [])] };
+                            } else {
+                                n = c;
+                            }
                             break;
                         }
                         case NodeTypes.SELECTOR_NODE: {
@@ -411,7 +420,8 @@ export class MenuBuilder {
         const selector = this._selectorsDictionary[id];
 
         if (!!selector) {
-            const contents: ICompiledEntityContents<ICompiledSelectorContents> = getCompiledContents(selector.contents, this._refs.languages, this._defaultLanguage, this._assetsDictionary);
+            const contents: ICompiledEntityContents<ICompiledSelectorContents> =
+                getCompiledContents(selector.contents, this._refs.languages, this._defaultLanguage, this._assetsDictionary);
 
             return {
                 id: selector.id,
@@ -429,7 +439,8 @@ export class MenuBuilder {
         const product = this._productsDictionary[id];
 
         if (!!product) {
-            const contents: ICompiledEntityContents<ICompiledProductContents> = getCompiledContents(product.contents, this._refs.languages, this._defaultLanguage, this._assetsDictionary);
+            const contents: ICompiledEntityContents<ICompiledProductContents> =
+                getCompiledContents(product.contents, this._refs.languages, this._defaultLanguage, this._assetsDictionary);
 
             const prices: {
                 [currencyId: string]: {
