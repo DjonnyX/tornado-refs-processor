@@ -16,7 +16,7 @@
   "license": "commerce",
   "repository": {
     "type": "git",
-    "url": "https://github.com/djonnyx/tornado-types"
+    "url": "https://github.com/djonnyx/tornado-refs-processor"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
