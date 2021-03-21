@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import * as fs from "fs";
 import { of, interval, Subject } from 'rxjs';
 import { take, switchMap } from 'rxjs/operators';
-import { IAsset, ICompiledMenu } from '@djonnyx/tornado-types';
+import { IAsset, ICompiledMenu, RefTypes } from '@djonnyx/tornado-types';
 import { TestDataSimpleMenuService } from "./TestDataSimpleMenuService";
 import { TestDataModifiersService } from './TestDataModifiersService';
 import { TestDataMenuInstancesService } from './TestDataMenuInstancesService';
@@ -68,7 +68,23 @@ describe('DataCombiner', () => {
                 console.log(progress);
             });
 
-            dataCombiner.init("1");
+            dataCombiner.init("1", {
+                refList: [
+                    RefTypes.LANGUAGES,
+                    RefTypes.TRANSLATIONS,
+                    RefTypes.NODES,
+                    RefTypes.SELECTORS,
+                    RefTypes.PRODUCTS,
+                    RefTypes.TAGS,
+                    RefTypes.ASSETS,
+                    RefTypes.STORES,
+                    RefTypes.TERMINALS,
+                    RefTypes.BUSINESS_PERIODS,
+                    RefTypes.ORDER_TYPES,
+                    RefTypes.CURRENCIES,
+                    RefTypes.ADS,
+                ]
+            });
         });
 
         expect(JSON.stringify(menu)).to.equal(JSON.stringify(INSTANCES_MENU_REF));
@@ -129,7 +145,23 @@ describe('DataCombiner', () => {
                 console.log(progress);
             });
 
-            dataCombiner.init("1");
+            dataCombiner.init("1", {
+                refList: [
+                    RefTypes.LANGUAGES,
+                    RefTypes.TRANSLATIONS,
+                    RefTypes.NODES,
+                    RefTypes.SELECTORS,
+                    RefTypes.PRODUCTS,
+                    RefTypes.TAGS,
+                    RefTypes.ASSETS,
+                    RefTypes.STORES,
+                    RefTypes.TERMINALS,
+                    RefTypes.BUSINESS_PERIODS,
+                    RefTypes.ORDER_TYPES,
+                    RefTypes.CURRENCIES,
+                    RefTypes.ADS,
+                ]
+            });
         });
 
         expect(JSON.stringify(menu)).to.equal(JSON.stringify(MODIFIERS_MENU_REF));
@@ -190,7 +222,23 @@ describe('DataCombiner', () => {
                 console.log(progress);
             });
 
-            dataCombiner.init("1");
+            dataCombiner.init("1", {
+                refList: [
+                    RefTypes.LANGUAGES,
+                    RefTypes.TRANSLATIONS,
+                    RefTypes.NODES,
+                    RefTypes.SELECTORS,
+                    RefTypes.PRODUCTS,
+                    RefTypes.TAGS,
+                    RefTypes.ASSETS,
+                    RefTypes.STORES,
+                    RefTypes.TERMINALS,
+                    RefTypes.BUSINESS_PERIODS,
+                    RefTypes.ORDER_TYPES,
+                    RefTypes.CURRENCIES,
+                    RefTypes.ADS,
+                ]
+            });
         });
 
         expect(JSON.stringify(menu)).to.equal(JSON.stringify(MAIN_MENU_REF));
@@ -251,7 +299,23 @@ describe('DataCombiner', () => {
                 console.log(progress);
             });
 
-            dataCombiner.init("1");
+            dataCombiner.init("1", {
+                refList: [
+                    RefTypes.LANGUAGES,
+                    RefTypes.TRANSLATIONS,
+                    RefTypes.NODES,
+                    RefTypes.SELECTORS,
+                    RefTypes.PRODUCTS,
+                    RefTypes.TAGS,
+                    RefTypes.ASSETS,
+                    RefTypes.STORES,
+                    RefTypes.TERMINALS,
+                    RefTypes.BUSINESS_PERIODS,
+                    RefTypes.ORDER_TYPES,
+                    RefTypes.CURRENCIES,
+                    RefTypes.ADS,
+                ]
+            });
         });
 
         expect(updateCount).to.equal(ACTUAL_UPDATE_COUNT);
@@ -314,7 +378,23 @@ describe('DataCombiner', () => {
                 console.log(progress);
             });
 
-            dataCombiner.init("1");
+            dataCombiner.init("1", {
+                refList: [
+                    RefTypes.LANGUAGES,
+                    RefTypes.TRANSLATIONS,
+                    RefTypes.NODES,
+                    RefTypes.SELECTORS,
+                    RefTypes.PRODUCTS,
+                    RefTypes.TAGS,
+                    RefTypes.ASSETS,
+                    RefTypes.STORES,
+                    RefTypes.TERMINALS,
+                    RefTypes.BUSINESS_PERIODS,
+                    RefTypes.ORDER_TYPES,
+                    RefTypes.CURRENCIES,
+                    RefTypes.ADS,
+                ]
+            });
         });
 
         expect(menu).to.equal(null);

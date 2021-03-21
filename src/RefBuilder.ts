@@ -1,11 +1,16 @@
 import { Observable, of, concat, Subject, BehaviorSubject } from "rxjs";
 import { switchMap, takeUntil, take, catchError } from "rxjs/operators";
-import { IRef, IRefs } from "@djonnyx/tornado-types";
+import { IRef, IRefs, RefTypes } from "@djonnyx/tornado-types";
 import { IDataService } from "./IDataService";
 
 interface IProgress {
     total: number;
     current: number;
+}
+
+export interface IRefBuilderOptions {
+    refList: Array<RefTypes | string>;
+    initialRefs?: IRefs;
 }
 
 export class RefBuilder {
@@ -33,7 +38,7 @@ export class RefBuilder {
     public onChange = this._onChange.asObservable();
 
     private _initialProgressState: IProgress = {
-        total: 13,
+        total: this._options.refList.length,
         current: 0,
     }
 
@@ -44,12 +49,12 @@ export class RefBuilder {
     private _onProgress = new BehaviorSubject<IProgress>(this.progressState);
     public onProgress = this._onProgress.asObservable();
 
-    constructor(private _service: IDataService, initialRefs?: IRefs) {
-        if (!!initialRefs) {
-            for (const refName in initialRefs) {
-                this._refsInfoDictionary[refName] = initialRefs[refName];
+    constructor(private _service: IDataService, private _options: IRefBuilderOptions) {
+        if (!!_options.initialRefs) {
+            for (const refName in _options.initialRefs) {
+                this._refsInfoDictionary[refName] = _options.initialRefs[refName];
             }
-            this._refs = initialRefs;
+            this._refs = _options.initialRefs;
         }
     }
 
@@ -74,13 +79,26 @@ export class RefBuilder {
         this._refs = null;
     }
 
+    private _refsInfo: Array<IRef>;
+
     get(): Observable<IRefs | null> {
-        this._service.getRefs().pipe(
-            take(1),
-            takeUntil(this.unsubscribe$),
-        ).subscribe(res => {
-            this.checkForUpdateRefs(res);
-        });
+        try {
+            this._service.getRefs().pipe(
+                take(1),
+                takeUntil(this.unsubscribe$),
+            ).subscribe(
+                res => {
+                    this._refsInfo = res;
+                    this.checkForUpdateRefs(res);
+                },
+                err => {
+                    this.checkForUpdateRefs(this._refsInfo);
+                }
+            );
+        } catch (err) {
+            console.error(err);
+            this.checkForUpdateRefs(this._refsInfo);
+        }
 
         return this.onChange;
     }
@@ -111,6 +129,10 @@ export class RefBuilder {
         let sequenceList = new Array<Observable<any>>();
 
         refsInfo.forEach(refInfo => {
+            if (this._options.refList.indexOf(refInfo.name) === -1) {
+                return;
+            }
+
             let refName: string;
             switch (refInfo.name) {
                 case "business-periods":
@@ -140,12 +162,12 @@ export class RefBuilder {
 
         const refs = [];
 
-        this.progressState = {...this._initialProgressState};
+        this.progressState = { ...this._initialProgressState };
         this._onProgress.next(this.progressState);
 
         concat(...sequenceList).subscribe(
             (needUpdate) => {
-                this.progressState.current ++;
+                this.progressState.current++;
                 this._onProgress.next(this.progressState);
                 refs.push(needUpdate);
             },

@@ -1,6 +1,6 @@
 {
   "name": "@djonnyx/tornado-refs-processor",
-  "version": "1.1.30",
+  "version": "1.2.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,7 +16,7 @@
   "license": "commerce",
   "repository": {
     "type": "git",
-    "url": "https://github.com/djonnyx/tornado-refs-processor"
+    "url": "https://github.com/djonnyx/tornado-types"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
