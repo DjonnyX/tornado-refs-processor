@@ -1,7 +1,7 @@
 import { switchMap, map, takeUntil } from "rxjs/operators";
 import { of, Subject, Observable } from "rxjs";
 import { ICompiledData, IAsset, AdTypes, SelectorTypes, IRefs } from "@djonnyx/tornado-types";
-import { RefBuilder } from "./RefBuilder";
+import { IRefBuilderOptions, RefBuilder } from "./RefBuilder";
 import { MenuBuilder } from "./MenuBuilder";
 import { IDataService } from "./IDataService";
 
@@ -35,8 +35,8 @@ export class DataCombiner {
 
     constructor(private options: IDataCombinerOptions) { }
 
-    init(storeId: string, refs?: IRefs): void {
-        this._refBuilder = new RefBuilder(this.options.dataService, refs);
+    init(storeId: string, options: IRefBuilderOptions): void {
+        this._refBuilder = new RefBuilder(this.options.dataService, options);
         this._menuBuilder = new MenuBuilder();
 
         this._refBuilder.onChange.pipe(

@@ -7,11 +7,28 @@ import {
 } from "./TestDataSimpleMenuService";
 import { RefBuilder } from "../src/RefBuilder";
 import { take } from 'rxjs/operators';
+import { RefTypes } from '@djonnyx/tornado-types';
 
 describe('RefBuilder', () => {
     it('should return valid refs', async () => {
         const service = new TestDataSimpleMenuService();
-        const refBuilder = new RefBuilder(service);
+        const refBuilder = new RefBuilder(service, {
+            refList: [
+                RefTypes.LANGUAGES,
+                RefTypes.TRANSLATIONS,
+                RefTypes.NODES,
+                RefTypes.SELECTORS,
+                RefTypes.PRODUCTS,
+                RefTypes.TAGS,
+                RefTypes.ASSETS,
+                RefTypes.STORES,
+                RefTypes.TERMINALS,
+                RefTypes.BUSINESS_PERIODS,
+                RefTypes.ORDER_TYPES,
+                RefTypes.CURRENCIES,
+                RefTypes.ADS,
+            ]
+        });
 
         const refs = await new Promise((resolve, reject) => {
             refBuilder.onChange.pipe(
