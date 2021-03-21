@@ -86,200 +86,188 @@ export class MenuBuilder {
             throw Error("refs in not defined.");
         }
 
-        if (!refs.assets) {
-            throw Error("assets ref in not defined.");
+        if (!!refs.assets) {
+            refs.assets.forEach(asset => {
+                this._assetsDictionary[asset.id] = asset;
+            });
         }
-
-        if (!refs.nodes) {
-            throw Error("nodes ref in not defined.");
-        }
-
-        if (!refs.selectors) {
-            throw Error("selectors ref in not defined.");
-        }
-
-        if (!refs.products) {
-            throw Error("products ref in not defined.");
-        }
-
-        if (!refs.tags) {
-            throw Error("tags ref in not defined.");
-        }
-
-        if (!refs.languages) {
-            throw Error("languages ref in not defined.");
-        }
-
-        if (!refs.translations) {
-            throw Error("translations ref in not defined.");
-        }
-
-        if (!refs.businessPeriods) {
-            throw Error("business-periods ref in not defined.");
-        }
-
-        if (!refs.orderTypes) {
-            throw Error("order-types ref in not defined.");
-        }
-
-        if (!refs.currencies) {
-            throw Error("currencies ref in not defined.");
-        }
-
-        if (!refs.stores) {
-            throw Error("stores ref in not defined.");
-        }
-
-        if (!refs.terminals) {
-            throw Error("terminals ref in not defined.");
-        }
-
-        if (!refs.ads) {
-            throw Error("ads ref in not defined.");
-        }
-
-        refs.assets.forEach(asset => {
-            this._assetsDictionary[asset.id] = asset;
-        });
 
         let firstLanguage: ILanguage;
-        refs.languages.forEach(language => {
-            if (language.active) {
-                if (language.isDefault) {
-                    this._defaultLanguage = language;
-                } else if (!firstLanguage) {
-                    firstLanguage = language;
+        if (!!refs.languages) {
+            refs.languages.forEach(language => {
+                if (language.active) {
+                    if (language.isDefault) {
+                        this._defaultLanguage = language;
+                    } else if (!firstLanguage) {
+                        firstLanguage = language;
+                    }
+                    this._languagesDictionary[language.code] = language;
                 }
-                this._languagesDictionary[language.code] = language;
-            }
-        });
+            });
 
-        if (!this._defaultLanguage) {
-            if (!firstLanguage) {
-                throw Error("Default language not found.");
-            }
-
-            this._defaultLanguage = firstLanguage;
-        }
-
-        refs.translations.forEach(translation => {
-            this._translationsDictionary[translation.language] = translation;
-        });
-
-        refs.nodes.forEach(node => {
-            this._nodesDictionary[node.id] = node;
-            if (node.type === NodeTypes.KIOSK_ROOT) {
-                this._rootNode = node;
-            }
-        });
-
-        if (!this._rootNode) {
-            throw Error("root node in not defined.");
-        }
-
-        refs.tags.forEach(tag => {
-            if (tag.active) {
-                this._tagsDictionary[tag.id] = tag;
-                this._compiledTagsDictionary[tag.id] = this.getCompiledTag(tag.id);
-            }
-        });
-
-        let firstCurrency: ICurrency;
-        refs.currencies.forEach(currency => {
-            if (currency.active) {
-                if (currency.isDefault) {
-                    this._defaultCurrecy = currency;
-                } else if (!firstCurrency) {
-                    firstCurrency = currency;
+            if (!this._defaultLanguage) {
+                if (!firstLanguage) {
+                    throw Error("Default language not found.");
                 }
-                this._currenciesDictionary[currency.id] = currency;
-            }
-        });
 
-        if (!this._defaultCurrecy) {
-            if (!firstCurrency) {
-                throw Error("Default currency not found.");
+                this._defaultLanguage = firstLanguage;
             }
-
-            this._defaultCurrecy = firstCurrency;
         }
 
-        refs.businessPeriods.forEach(businessPeriod => {
-            if (businessPeriod.active) {
-                this._businessPeriodsDictionary[businessPeriod.id] = businessPeriod;
-            }
-        });
+        if (!!refs.translations) {
+            refs.translations.forEach(translation => {
+                this._translationsDictionary[translation.language] = translation;
+            });
+        }
 
-        let firstOrderType: IOrderType;
-        refs.orderTypes.forEach(orderType => {
-            if (orderType.active) {
-                if (orderType.isDefault) {
-                    this._defaultOrderType = orderType;
-                } else if (!firstOrderType) {
-                    firstOrderType = orderType;
+        if (!!refs.nodes) {
+            refs.nodes.forEach(node => {
+                this._nodesDictionary[node.id] = node;
+                if (node.type === NodeTypes.KIOSK_ROOT) {
+                    this._rootNode = node;
                 }
-                this._orderTypesDictionary[orderType.id] = orderType;
-            }
-        });
+            });
 
-        if (!this._defaultOrderType) {
-            this._defaultOrderType = firstOrderType;
+            if (!this._rootNode) {
+                throw Error("root node in not defined.");
+            }
         }
 
-        refs.ads.forEach(ad => {
-            if (ad.active) {
-                this._adsDictionary[ad.id] = ad;
+        if (!!refs.tags) {
+            refs.tags.forEach(tag => {
+                if (tag.active) {
+                    this._tagsDictionary[tag.id] = tag;
+                    this._compiledTagsDictionary[tag.id] = this.getCompiledTag(tag.id);
+                }
+            });
+        }
+
+        if (!!refs.currencies) {
+            let firstCurrency: ICurrency;
+            refs.currencies.forEach(currency => {
+                if (currency.active) {
+                    if (currency.isDefault) {
+                        this._defaultCurrecy = currency;
+                    } else if (!firstCurrency) {
+                        firstCurrency = currency;
+                    }
+                    this._currenciesDictionary[currency.id] = currency;
+                }
+            });
+
+            if (!this._defaultCurrecy) {
+                if (!firstCurrency) {
+                    throw Error("Default currency not found.");
+                }
+
+                this._defaultCurrecy = firstCurrency;
             }
-        });
+        }
 
-        refs.stores.forEach(store => {
-            this._storesDictionary[store.id] = store;
-        });
+        if (!!refs.businessPeriods) {
+            refs.businessPeriods.forEach(businessPeriod => {
+                if (businessPeriod.active) {
+                    this._businessPeriodsDictionary[businessPeriod.id] = businessPeriod;
+                }
+            });
+        }
 
-        refs.terminals.forEach(terminal => {
-            this._terminalsDictionary[terminal.id] = terminal;
-        });
+        if (!!refs.orderTypes) {
+            let firstOrderType: IOrderType;
+            refs.orderTypes.forEach(orderType => {
+                if (orderType.active) {
+                    if (orderType.isDefault) {
+                        this._defaultOrderType = orderType;
+                    } else if (!firstOrderType) {
+                        firstOrderType = orderType;
+                    }
+                    this._orderTypesDictionary[orderType.id] = orderType;
+                }
+            });
 
-        refs.selectors.forEach(selector => {
-            if (selector.active) {
-                this._selectorsDictionary[selector.id] = selector;
-                this._compiledSelectorsDictionary[selector.id] = this.getCompiledSelector(selector.id);
-                this._compiledSelectors.push(this._compiledSelectorsDictionary[selector.id]);
+            if (!this._defaultOrderType) {
+                this._defaultOrderType = firstOrderType;
             }
-        });
+        }
 
-        refs.products.forEach(product => {
-            if (product.active) {
-                this._productsDictionary[product.id] = product;
-                this._compiledProductsDictionary[product.id] = this.getCompiledProduct(product.id);
-                this._compiledProducts.push(this._compiledProductsDictionary[product.id]);
-            }
-        });
+        if (!!refs.ads) {
+            refs.ads.forEach(ad => {
+                if (ad.active) {
+                    this._adsDictionary[ad.id] = ad;
+                }
+            });
+        }
 
-        // Привязка структур продуктов
-        this._compiledProducts.forEach(product => {
-            const baseProduct = this._productsDictionary[product.id];
-            const jointNode = this._nodesDictionary[baseProduct.joint];
-            if (!!jointNode) {
-                product.structure = this.buildMenuTree(jointNode);
-            }
-        });
+        if (!!refs.stores) {
+            refs.stores.forEach(store => {
+                this._storesDictionary[store.id] = store;
+            });
+        }
 
-        this._menu = this.buildMenuTree(this._rootNode);
+        if (!!refs.terminals) {
+            refs.terminals.forEach(terminal => {
+                this._terminalsDictionary[terminal.id] = terminal;
+            });
+        }
 
-        this._compiledLanguages = refs.languages.filter(v => !!v && v.active).map(v => this.getCompiledLanguages(v.code));
+        if (!!refs.selectors) {
+            refs.selectors.forEach(selector => {
+                if (selector.active) {
+                    this._selectorsDictionary[selector.id] = selector;
+                    this._compiledSelectorsDictionary[selector.id] = this.getCompiledSelector(selector.id);
+                    this._compiledSelectors.push(this._compiledSelectorsDictionary[selector.id]);
+                }
+            });
+        }
 
-        this._compiledDefaultLanguage = this.getCompiledLanguages(this._defaultLanguage.code);
+        if (!!refs.products) {
+            refs.products.forEach(product => {
+                if (product.active) {
+                    this._productsDictionary[product.id] = product;
+                    this._compiledProductsDictionary[product.id] = this.getCompiledProduct(product.id);
+                    this._compiledProducts.push(this._compiledProductsDictionary[product.id]);
+                }
+            });
 
-        this._compiledDefaultOrderType = !!this._defaultOrderType ? this.getCompiledOrderType(this._defaultOrderType.id) : undefined;
+            // Привязка структур продуктов
+            this._compiledProducts.forEach(product => {
+                const baseProduct = this._productsDictionary[product.id];
+                const jointNode = this._nodesDictionary[baseProduct.joint];
+                if (!!jointNode) {
+                    product.structure = this.buildMenuTree(jointNode);
+                }
+            });
+        }
 
-        this._compiledDefaultCurrency = this._defaultCurrecy;
+        if (!!refs.nodes && !!refs.selectors && !!refs.products) {
+            this._menu = this.buildMenuTree(this._rootNode);
+        }
 
-        this._compiledOrderTypes = refs.orderTypes.filter(v => !!v && v.active).map(v => this.getCompiledOrderType(v.id));
+        if (!!refs.languages) {
+            this._compiledLanguages = refs.languages.filter(v => !!v && v.active).map(v => this.getCompiledLanguages(v.code));
 
-        this._compiledTags = refs.tags.filter(v => !!v && v.active).map(v => this._compiledTagsDictionary[v.id]);
+            this._compiledDefaultLanguage = this.getCompiledLanguages(this._defaultLanguage.code);
+        }
 
-        this._compiledAds = refs.ads.filter(v => !!v && v.active).map(v => this.getCompiledAd(v.id));
+        if (!!refs.orderTypes) {
+            this._compiledDefaultOrderType = !!this._defaultOrderType ? this.getCompiledOrderType(this._defaultOrderType.id) : undefined;
+        }
+
+        if (!!refs.currencies) {
+            this._compiledDefaultCurrency = this._defaultCurrecy;
+        }
+
+        if (!!refs.orderTypes) {
+            this._compiledOrderTypes = refs.orderTypes.filter(v => !!v && v.active).map(v => this.getCompiledOrderType(v.id));
+        }
+
+        if (refs.tags) {
+            this._compiledTags = refs.tags.filter(v => !!v && v.active).map(v => this._compiledTagsDictionary[v.id]);
+        }
+
+        if (!!refs.ads) {
+            this._compiledAds = refs.ads.filter(v => !!v && v.active).map(v => this.getCompiledAd(v.id));
+        }
     }
 
     private buildMenuTree(rootNode: INode): ICompiledMenu {
