@@ -539,6 +539,10 @@ export const TERMINALS_DATA: Array<ITerminal> = [
         lastwork: new Date(),
         imei: "333-111-000",
         licenseId: "507c7f79bcf86cd7994f6c0e",
+        config: {
+            theme: "light",
+            suffix: "K",
+        },
         extra: {
             key: "value",
         },
