@@ -116,7 +116,7 @@ export class MenuBuilder {
 
         if (!!refs.translations) {
             refs.translations.forEach(translation => {
-                this._translationsDictionary[translation.language] = translation;
+                this._translationsDictionary[translation.id] = translation;
             });
         }
 
