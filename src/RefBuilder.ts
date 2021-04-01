@@ -1,6 +1,6 @@
 import { Observable, of, concat, Subject, BehaviorSubject } from "rxjs";
 import { switchMap, takeUntil, take, catchError } from "rxjs/operators";
-import { IRef, IRefs, RefTypes } from "@djonnyx/tornado-types";
+import { IRef, IRefs, RefTypes, AppTheme } from "@djonnyx/tornado-types";
 import { IDataService } from "./IDataService";
 
 interface IProgress {
@@ -8,17 +8,17 @@ interface IProgress {
     current: number;
 }
 
-export interface IRefBuilderOptions {
+export interface IRefBuilderOptions<T = any> {
     refList: Array<RefTypes | string>;
-    initialRefs?: IRefs;
+    initialRefs?: IRefs<T>;
 }
 
-export class RefBuilder {
+export class RefBuilder<T = AppTheme> {
     protected unsubscribe$ = new Subject<void>();
 
     private _refsInfoDictionary: { [refName: string]: IRef } = {};
 
-    private _refs: IRefs = {
+    private _refs: IRefs<T> = {
         languages: null,
         translations: null,
         nodes: null,
@@ -32,9 +32,10 @@ export class RefBuilder {
         orderTypes: null,
         currencies: null,
         ads: null,
+        themes: null,
     };
 
-    private _onChange = new Subject<IRefs | null>();
+    private _onChange = new Subject<IRefs<T> | null>();
     public onChange = this._onChange.asObservable();
 
     private _initialProgressState: IProgress = {
@@ -49,7 +50,7 @@ export class RefBuilder {
     private _onProgress = new BehaviorSubject<IProgress>(this.progressState);
     public onProgress = this._onProgress.asObservable();
 
-    constructor(private _service: IDataService, private _options: IRefBuilderOptions) {
+    constructor(private _service: IDataService, private _options: IRefBuilderOptions<T>) {
         if (!!_options.initialRefs) {
             for (const refName in _options.initialRefs) {
                 this._refsInfoDictionary[refName] = _options.initialRefs[refName];
@@ -81,7 +82,7 @@ export class RefBuilder {
 
     private _refsInfo: Array<IRef>;
 
-    get(): Observable<IRefs | null> {
+    get(): Observable<IRefs<T> | null> {
         try {
             this._service.getRefs().pipe(
                 take(1),
@@ -145,7 +146,7 @@ export class RefBuilder {
                     refName = refInfo.name;
             }
 
-            if (/^(languages|translations|nodes|products|selectors|tags|assets|stores|terminals|businessPeriods|orderTypes|currencies|ads)$/.test(refName)) {
+            if (/^(languages|translations|nodes|products|selectors|tags|assets|stores|terminals|businessPeriods|orderTypes|currencies|ads|themes)$/.test(refName)) {
                 if (!this._refsInfoDictionary[refName] || this._refsInfoDictionary[refName].version !== refInfo.version) {
                     const res = this.updateRefByName(refName);
                     sequenceList.push(res);
@@ -244,6 +245,8 @@ export class RefBuilder {
                 return this._service.getStores();
             case "terminals":
                 return this._service.getTerminals();
+            case "themes":
+                return this._service.getThemes();
         }
 
         return null;
