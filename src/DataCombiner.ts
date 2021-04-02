@@ -84,6 +84,7 @@ export class DataCombiner {
                                 schema: this._menuBuilder.compiledSelectors.filter(v => v.type === SelectorTypes.SCHEMA_CATEGORY),
                             },
                             products: this._menuBuilder.compiledProducts,
+                            themes: refs.themes,
                         },
                         menu: this._menuBuilder.menu,
                     });

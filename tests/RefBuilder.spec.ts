@@ -3,7 +3,8 @@ import * as fs from "fs";
 import {
     TestDataSimpleMenuService, NODES_DATA, SELECTORS_DATA, PRODUCTS_DATA, TAGS_DATA, ASSETS_DATA, LANGUAGES_DATA,
     TRANSLATIONS_DATA, STORES_DATA, TERMINALS_DATA, BUSINESS_PERIODS_DATA, ORDER_TYPES_DATA, CURRENCIES_DATA,
-    ADS_DATA
+    ADS_DATA,
+    THEMES_DATA
 } from "./TestDataSimpleMenuService";
 import { RefBuilder } from "../src/RefBuilder";
 import { take } from 'rxjs/operators';
@@ -27,6 +28,7 @@ describe('RefBuilder', () => {
                 RefTypes.ORDER_TYPES,
                 RefTypes.CURRENCIES,
                 RefTypes.ADS,
+                RefTypes.THEMES,
             ]
         });
 
@@ -65,6 +67,7 @@ describe('RefBuilder', () => {
             orderTypes: ORDER_TYPES_DATA,
             currencies: CURRENCIES_DATA,
             ads: ADS_DATA,
+            themes: THEMES_DATA,
         }));
     });
 });

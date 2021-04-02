@@ -1,5 +1,8 @@
 import { Observable, of, interval } from "rxjs";
-import { IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes, ITranslation, IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, AdTypes, TerminalStatusTypes, TerminalTypes, RefTypes } from "@djonnyx/tornado-types";
+import {
+    IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes, ITranslation,
+    IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, RefTypes
+} from "@djonnyx/tornado-types";
 import { take, switchMap } from "rxjs/operators";
 
 const currentTestDate = new Date("2020-09-11T11:18:11.284Z");
@@ -322,6 +325,8 @@ export const M_STORES_DATA: Array<IStore> = [];
 
 export const M_TERMINALS_DATA: Array<ITerminal> = [];
 
+export const M_THEMES_DATA: Array<any> = [];
+
 const request = (data: any) => {
     return interval(100).pipe(
         take(1),
@@ -329,7 +334,7 @@ const request = (data: any) => {
     );
 }
 
-export class TestDataModifiersService {
+export class TestDataModifiersService<T = any> {
     getRefs(): Observable<Array<IRef>> {
         return request(M_REFS_INFO_DATA);
     };
@@ -384,5 +389,9 @@ export class TestDataModifiersService {
 
     getTerminals(): Observable<Array<ITerminal>> {
         return request(M_TERMINALS_DATA);
+    }
+
+    getThemes(): Observable<Array<T>> {
+        return request(M_THEMES_DATA);
     }
 }
