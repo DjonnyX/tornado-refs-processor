@@ -1,6 +1,8 @@
 import { Observable, of, interval } from "rxjs";
-import { IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes, ITranslation, IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, AdTypes, TerminalStatusTypes, TerminalTypes, RefTypes } from "@djonnyx/tornado-types";
 import { take, switchMap } from "rxjs/operators";
+import { IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes,
+    ITranslation, IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, AdTypes,
+    TerminalStatusTypes, TerminalTypes, RefTypes, IKioskTheme, IKioskThemeColors } from "@djonnyx/tornado-types";
 
 const currentTestDate = new Date("2020-09-11T11:18:11.284Z");
 
@@ -67,6 +69,11 @@ export const REFS_INFO_DATA: Array<IRef> = [
     },
     {
         name: RefTypes.ADS,
+        version: 1,
+        lastUpdate: currentTestDate,
+    },
+    {
+        name: RefTypes.THEMES,
         version: 1,
         lastUpdate: currentTestDate,
     },
@@ -549,6 +556,14 @@ export const TERMINALS_DATA: Array<ITerminal> = [
     }
 ];
 
+export const THEMES_DATA: Array<any> = [
+    {
+        "skinedProp": {
+            "skinedElement": "value",
+        }
+    }
+];
+
 const request = (data: any) => {
     return interval(100).pipe(
         take(1),
@@ -556,7 +571,7 @@ const request = (data: any) => {
     );
 }
 
-export class TestDataSimpleMenuService {
+export class TestDataSimpleMenuService<T = any> {
     getRefs(): Observable<Array<IRef>> {
         return request(REFS_INFO_DATA);
     };
@@ -611,5 +626,9 @@ export class TestDataSimpleMenuService {
 
     getTerminals(): Observable<Array<ITerminal>> {
         return request(TERMINALS_DATA);
+    }
+
+    getThemes(): Observable<Array<T>> {
+        return request(THEMES_DATA);
     }
 }
