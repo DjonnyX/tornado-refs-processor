@@ -78,6 +78,7 @@ export class DataCombiner {
                             ads: {
                                 intros: this._menuBuilder.compiledAds.filter(v => v.type === AdTypes.INTRO),
                                 banners: this._menuBuilder.compiledAds.filter(v => v.type === AdTypes.BANNER),
+                                serviceUnavailableIntros: this._menuBuilder.compiledAds.filter(v => v.type === AdTypes.SERVICE_UNAVAILABLE),
                             },
                             selectors: {
                                 menu: this._menuBuilder.compiledSelectors.filter(v => v.type === SelectorTypes.MENU_CATEGORY),
