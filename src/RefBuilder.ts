@@ -2,6 +2,7 @@ import { Observable, of, concat, Subject, BehaviorSubject } from "rxjs";
 import { switchMap, takeUntil, take, catchError } from "rxjs/operators";
 import { IRef, IRefs, RefTypes, AppTheme } from "@djonnyx/tornado-types";
 import { IDataService } from "./IDataService";
+import { WorkStatuses } from "./enums";
 
 interface IProgress {
     total: number;
@@ -38,6 +39,9 @@ export class RefBuilder<T = AppTheme> {
     private _onChange = new Subject<IRefs<T> | null>();
     public onChange = this._onChange.asObservable();
 
+    private _onChangeStatus = new BehaviorSubject<WorkStatuses>(WorkStatuses.WORK);
+    public onChangeStatus = this._onChangeStatus.asObservable();
+
     private _initialProgressState: IProgress = {
         total: this._options.refList.length,
         current: 0,
@@ -71,6 +75,11 @@ export class RefBuilder<T = AppTheme> {
             this._onChange = null;
         }
 
+        if (!!this._onChangeStatus) {
+            this._onChangeStatus.unsubscribe();
+            this._onChangeStatus = null;
+        }
+
         if (!!this._onProgress) {
             this._onProgress.unsubscribe();
             this._onProgress = null;
@@ -90,9 +99,11 @@ export class RefBuilder<T = AppTheme> {
             ).subscribe(
                 res => {
                     this._refsInfo = res;
+                    this._onChangeStatus.next(WorkStatuses.WORK);
                     this.checkForUpdateRefs(res);
                 },
                 err => {
+                    this._onChangeStatus.next(WorkStatuses.ERROR);
                     this.checkForUpdateRefs(this._refsInfo);
                 }
             );
