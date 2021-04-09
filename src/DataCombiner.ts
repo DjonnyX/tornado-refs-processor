@@ -1,9 +1,10 @@
 import { switchMap, map, takeUntil } from "rxjs/operators";
-import { of, Subject, Observable } from "rxjs";
+import { of, Subject, Observable, BehaviorSubject } from "rxjs";
 import { ICompiledData, IAsset, AdTypes, SelectorTypes, IRefs } from "@djonnyx/tornado-types";
 import { IRefBuilderOptions, RefBuilder } from "./RefBuilder";
 import { MenuBuilder } from "./MenuBuilder";
 import { IDataService } from "./IDataService";
+import { WorkStatuses } from "./enums";
 
 export interface IDataCombinerOptions {
     assetsTransformer: (assets: Array<IAsset>) => {
@@ -23,6 +24,9 @@ export class DataCombiner {
     private _onChange = new Subject<ICompiledData>();
     readonly onChange = this._onChange.asObservable();
 
+    private _onChangeStatus = new BehaviorSubject<WorkStatuses>(WorkStatuses.WORK);
+    readonly onChangeStatus = this._onChangeStatus.asObservable();
+
     private _onProgress = new Subject<IProgress>();
     readonly onProgress = this._onProgress.asObservable();
 
@@ -38,6 +42,14 @@ export class DataCombiner {
     init(storeId: string, options: IRefBuilderOptions): void {
         this._refBuilder = new RefBuilder(this.options.dataService, options);
         this._menuBuilder = new MenuBuilder();
+
+        this._refBuilder.onChangeStatus.pipe(
+            takeUntil(this._unsubscribe$),
+        ).subscribe(
+            status => {
+                this._onChangeStatus.next(status);
+            }
+        );
 
         this._refBuilder.onChange.pipe(
             takeUntil(this._unsubscribe$),
@@ -64,6 +76,8 @@ export class DataCombiner {
             }),
         ).subscribe(
             refs => {
+                this._onChangeStatus.next(WorkStatuses.BUILD_WORK);
+
                 if (!!refs) {
                     this._menuBuilder.build(storeId, refs);
                     this._onChange.next({
@@ -96,6 +110,7 @@ export class DataCombiner {
                 this.getRefsDelayed();
             }, err => {
                 console.error(err);
+                this._onChangeStatus.next(WorkStatuses.BUILD_ERROR);
                 this.getRefsDelayed();
             }
         );
@@ -135,6 +150,11 @@ export class DataCombiner {
         if (!!this._menuBuilder) {
             this._menuBuilder.dispose();
             this._menuBuilder = null;
+        }
+
+        if (!!this._onChangeStatus) {
+            this._onChangeStatus.unsubscribe();
+            this._onChangeStatus = null;
         }
 
         if (!!this._onChange) {
