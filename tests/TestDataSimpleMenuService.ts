@@ -538,7 +538,7 @@ export const STORES_DATA: Array<IStore> = [
 export const TERMINALS_DATA: Array<ITerminal> = [
     {
         id: "507c7f79bcf86cd7994f6c0e",
-        clientId: "507c7f79bcf86cd7994f6c0e",
+        client: "507c7f79bcf86cd7994f6c0e",
         status: TerminalStatusTypes.ONLINE,
         type: TerminalTypes.KIOSK,
         name: "My terminal",
