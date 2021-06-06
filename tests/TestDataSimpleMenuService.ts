@@ -387,6 +387,7 @@ export const ASSETS_DATA: Array<IAsset> = [
             x128: "assets/a1_x128.png",
             x32: "assets/a1_x32.png",
         },
+        extra: {},
     },
     {
         id: "a2",
@@ -399,6 +400,7 @@ export const ASSETS_DATA: Array<IAsset> = [
             x128: "assets/a2_x128.png",
             x32: "assets/a2_x32.png",
         },
+        extra: {},
     },
     {
         id: "a3",
@@ -411,6 +413,7 @@ export const ASSETS_DATA: Array<IAsset> = [
             x128: "assets/a3_x128.png",
             x32: "assets/a3_x32.png",
         },
+        extra: {},
     },
 ];
 
