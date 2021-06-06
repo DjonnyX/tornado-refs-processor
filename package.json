@@ -1,6 +1,6 @@
 {
   "name": "@djonnyx/tornado-refs-processor",
-  "version": "1.2.12",
+  "version": "1.2.14",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -33,7 +33,7 @@
     "typings": "^2.1.1"
   },
   "dependencies": {
-    "@djonnyx/tornado-types": "1.4.34",
+    "@djonnyx/tornado-types": "1.4.49",
     "rxjs": "^6.6.0"
   }
 }
