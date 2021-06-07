@@ -4,7 +4,8 @@ import {
     TestDataSimpleMenuService, NODES_DATA, SELECTORS_DATA, PRODUCTS_DATA, TAGS_DATA, ASSETS_DATA, LANGUAGES_DATA,
     TRANSLATIONS_DATA, STORES_DATA, TERMINALS_DATA, BUSINESS_PERIODS_DATA, ORDER_TYPES_DATA, CURRENCIES_DATA,
     ADS_DATA,
-    THEMES_DATA
+    THEMES_DATA,
+    SYSTEM_TAGS_DATA
 } from "./TestDataSimpleMenuService";
 import { RefBuilder } from "../src/RefBuilder";
 import { take } from 'rxjs/operators';
@@ -29,6 +30,7 @@ describe('RefBuilder', () => {
                 RefTypes.CURRENCIES,
                 RefTypes.ADS,
                 RefTypes.THEMES,
+                RefTypes.SYSTEM_TAGS,
             ]
         });
 
@@ -68,6 +70,7 @@ describe('RefBuilder', () => {
             currencies: CURRENCIES_DATA,
             ads: ADS_DATA,
             themes: THEMES_DATA,
+            systemTags: SYSTEM_TAGS_DATA,
         }));
     });
 });

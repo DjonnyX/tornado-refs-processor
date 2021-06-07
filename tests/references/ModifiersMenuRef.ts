@@ -117,6 +117,8 @@ export const MODIFIERS_MENU_REF: ICompiledMenu = {
                                         "tags": [],
                                         "minPrices": {},
                                         "structure": undefined,
+                                        "systemTag": undefined,
+                                        "weight": 100,
                                         "extra": {
                                             "key": "value"
                                         }
@@ -139,6 +141,8 @@ export const MODIFIERS_MENU_REF: ICompiledMenu = {
                         "key": "value"
                     },
                 },
+                "systemTag": undefined,
+                "weight": 100,
                 "extra": {
                     "key": "value"
                 },
@@ -256,6 +260,8 @@ export const MODIFIERS_MENU_REF: ICompiledMenu = {
                                         "tags": [],
                                         "minPrices": {},
                                         "structure": undefined,
+                                        "systemTag": undefined,
+                                        "weight": 100,
                                         "extra": {
                                             "key": "value"
                                         }
@@ -278,6 +284,8 @@ export const MODIFIERS_MENU_REF: ICompiledMenu = {
                         "key": "value"
                     },
                 },
+                "systemTag": undefined,
+                "weight": 100,
                 "extra": {
                     "key": "value"
                 },

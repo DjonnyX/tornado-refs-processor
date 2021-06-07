@@ -1,7 +1,7 @@
 import { Observable, of, interval } from "rxjs";
 import {
     IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes, ITranslation,
-    IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, RefTypes
+    IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, RefTypes, ISystemTag
 } from "@djonnyx/tornado-types";
 import { take, switchMap } from "rxjs/operators";
 
@@ -70,6 +70,16 @@ export const M1_REFS_INFO_DATA: Array<IRef> = [
     },
     {
         name: RefTypes.ADS,
+        version: 1,
+        lastUpdate: currentTestDate,
+    },
+    {
+        name: RefTypes.THEMES,
+        version: 1,
+        lastUpdate: currentTestDate,
+    },
+    {
+        name: RefTypes.SYSTEM_TAGS,
         version: 1,
         lastUpdate: currentTestDate,
     },
@@ -188,6 +198,8 @@ export const M1_PRODUCTS_DATA: Array<IProduct> = [
         tags: [],
         receipt: [],
         joint: "j1",
+        systemTag: undefined,
+        weight: 100,
     },
 ];
 
@@ -249,6 +261,8 @@ export const M1_STORES_DATA: Array<IStore> = [];
 export const M1_TERMINALS_DATA: Array<ITerminal> = [];
 
 export const M1_THEMES_DATA: Array<any> = [];
+
+export const M1_SYSTEM_TAGS_DATA: Array<ISystemTag> = [];
 
 const request = (data: any) => {
     return interval(100).pipe(
@@ -316,5 +330,9 @@ export class TestDataMenuInstancesService<T = any> {
 
     getThemes(): Observable<Array<T>> {
         return request(M1_THEMES_DATA);
+    }
+
+    getSystemTags(): Observable<Array<ISystemTag>> {
+        return request(M1_SYSTEM_TAGS_DATA);
     }
 }

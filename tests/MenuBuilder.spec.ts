@@ -83,6 +83,8 @@ describe('DataCombiner', () => {
                     RefTypes.ORDER_TYPES,
                     RefTypes.CURRENCIES,
                     RefTypes.ADS,
+                    RefTypes.THEMES,
+                    RefTypes.SYSTEM_TAGS,
                 ]
             });
         });
@@ -160,6 +162,8 @@ describe('DataCombiner', () => {
                     RefTypes.ORDER_TYPES,
                     RefTypes.CURRENCIES,
                     RefTypes.ADS,
+                    RefTypes.THEMES,
+                    RefTypes.SYSTEM_TAGS,
                 ]
             });
         });
@@ -237,6 +241,8 @@ describe('DataCombiner', () => {
                     RefTypes.ORDER_TYPES,
                     RefTypes.CURRENCIES,
                     RefTypes.ADS,
+                    RefTypes.THEMES,
+                    RefTypes.SYSTEM_TAGS,
                 ]
             });
         });
@@ -314,6 +320,8 @@ describe('DataCombiner', () => {
                     RefTypes.ORDER_TYPES,
                     RefTypes.CURRENCIES,
                     RefTypes.ADS,
+                    RefTypes.THEMES,
+                    RefTypes.SYSTEM_TAGS,
                 ]
             });
         });
@@ -393,6 +401,8 @@ describe('DataCombiner', () => {
                     RefTypes.ORDER_TYPES,
                     RefTypes.CURRENCIES,
                     RefTypes.ADS,
+                    RefTypes.THEMES,
+                    RefTypes.SYSTEM_TAGS,
                 ]
             });
         });

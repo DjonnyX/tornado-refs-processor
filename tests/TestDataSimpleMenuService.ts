@@ -1,8 +1,10 @@
 import { Observable, of, interval } from "rxjs";
 import { take, switchMap } from "rxjs/operators";
-import { IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes,
+import {
+    IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes,
     ITranslation, IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, AdTypes,
-    TerminalStatusTypes, TerminalTypes, RefTypes, IKioskTheme, IKioskThemeColors } from "@djonnyx/tornado-types";
+    TerminalStatusTypes, TerminalTypes, RefTypes, IKioskTheme, IKioskThemeColors, ISystemTag
+} from "@djonnyx/tornado-types";
 
 const currentTestDate = new Date("2020-09-11T11:18:11.284Z");
 
@@ -74,6 +76,11 @@ export const REFS_INFO_DATA: Array<IRef> = [
     },
     {
         name: RefTypes.THEMES,
+        version: 1,
+        lastUpdate: currentTestDate,
+    },
+    {
+        name: RefTypes.SYSTEM_TAGS,
         version: 1,
         lastUpdate: currentTestDate,
     },
@@ -268,6 +275,8 @@ export const PRODUCTS_DATA: Array<IProduct> = [
         }],
         extra: { key: "value" },
         tags: ["t1", "t2"],
+        systemTag: "st1",
+        weight: 100,
         receipt: [],
         joint: "j1",
     },
@@ -291,6 +300,8 @@ export const PRODUCTS_DATA: Array<IProduct> = [
             currency: "507c7f79bcf86cd7994f6c0e",
             value: 10000,
         }],
+        systemTag: "st1",
+        weight: 100,
         extra: { key: "value" },
         tags: ["t3"],
         receipt: [],
@@ -315,6 +326,8 @@ export const PRODUCTS_DATA: Array<IProduct> = [
             currency: "507c7f79bcf86cd7994f6c0e",
             value: 10000,
         }],
+        systemTag: "st1",
+        weight: 100,
         extra: { key: "value" },
         tags: ["t3"],
         receipt: [],
@@ -567,6 +580,16 @@ export const THEMES_DATA: Array<any> = [
     }
 ];
 
+export const SYSTEM_TAGS_DATA: Array<ISystemTag> = [
+    {
+        id: "st1",
+        name: "sys-tag_01",
+        extra: {
+            key: "value",
+        },
+    },
+]
+
 const request = (data: any) => {
     return interval(100).pipe(
         take(1),
@@ -633,5 +656,9 @@ export class TestDataSimpleMenuService<T = any> {
 
     getThemes(): Observable<Array<T>> {
         return request(THEMES_DATA);
+    }
+
+    getSystemTags(): Observable<Array<ISystemTag>> {
+        return request(SYSTEM_TAGS_DATA);
     }
 }

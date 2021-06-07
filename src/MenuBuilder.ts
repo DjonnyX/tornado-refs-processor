@@ -1,7 +1,7 @@
 import {
     INode, IAsset, ISelector, IProduct, ITag, IRefs, NodeTypes, ICurrency, ITranslation, ILanguage,
     IBusinessPeriod, IOrderType, IStore, ITerminal, ICompiledMenu, ICompiledMenuNode, ICompiledSelector,
-    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents, ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes, IScenario
+    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents, ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes, IScenario, ISystemTag
 } from "@djonnyx/tornado-types";
 import { getCompiledContents } from "./utils/getCompiledContents";
 import { ICompiledEntityContents } from "@djonnyx/tornado-types/dist/interfaces/ICompiledEntityContents";
@@ -19,6 +19,7 @@ export class MenuBuilder {
     private _selectorsDictionary: { [id: string]: ISelector };
     private _productsDictionary: { [id: string]: IProduct };
     private _tagsDictionary: { [id: string]: ITag };
+    private _systemTagsDictionary: { [id: string]: ISystemTag };
     private _currenciesDictionary: { [id: string]: ICurrency };
     private _businessPeriodsDictionary: { [id: string]: IBusinessPeriod };
     private _orderTypesDictionary: { [id: string]: IOrderType };
@@ -139,6 +140,12 @@ export class MenuBuilder {
                     this._tagsDictionary[tag.id] = tag;
                     this._compiledTagsDictionary[tag.id] = this.getCompiledTag(tag.id);
                 }
+            });
+        }
+
+        if (!!refs.systemTags) {
+            refs.systemTags.forEach(systemTag => {
+                this._systemTagsDictionary[systemTag.id] = systemTag;
             });
         }
 
@@ -461,6 +468,8 @@ export class MenuBuilder {
                 tags,
                 minPrices: {},
                 structure: undefined,
+                weight: product.weight,
+                systemTag: this._systemTagsDictionary?.[product.systemTag],
                 extra: product.extra,
             };
         }
@@ -567,6 +576,7 @@ export class MenuBuilder {
         this._compiledProducts = [];
 
         // словари
+        this._systemTagsDictionary = {};
         this._adsDictionary = {};
         this._languagesDictionary = {};
         this._translationsDictionary = {};
@@ -602,6 +612,7 @@ export class MenuBuilder {
         this._compiledSelectors = null;
         this._compiledProducts = null;
 
+        this._systemTagsDictionary = null;
         this._adsDictionary = null;
         this._languagesDictionary = null;
         this._translationsDictionary = null;
