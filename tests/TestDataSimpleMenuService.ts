@@ -3,7 +3,7 @@ import { take, switchMap } from "rxjs/operators";
 import {
     IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes,
     ITranslation, IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, AdTypes,
-    TerminalStatusTypes, TerminalTypes, RefTypes, IKioskTheme, IKioskThemeColors, ISystemTag
+    TerminalStatusTypes, TerminalTypes, RefTypes, IKioskTheme, IKioskThemeData, ISystemTag
 } from "@djonnyx/tornado-types";
 
 const currentTestDate = new Date("2020-09-11T11:18:11.284Z");
