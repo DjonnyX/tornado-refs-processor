@@ -1,13 +1,15 @@
 import {
     INode, IAsset, ISelector, IProduct, ITag, IRefs, NodeTypes, ICurrency, ITranslation, ILanguage,
     IBusinessPeriod, IOrderType, IStore, ITerminal, ICompiledMenu, ICompiledMenuNode, ICompiledSelector,
-    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents, ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes, IScenario
+    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents, ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes, IScenario, ISystemTag
 } from "@djonnyx/tornado-types";
 import { getCompiledContents } from "./utils/getCompiledContents";
 import { ICompiledEntityContents } from "@djonnyx/tornado-types/dist/interfaces/ICompiledEntityContents";
 import { ICompiledTranslation } from "@djonnyx/tornado-types/dist/interfaces/ICompiledTranslation";
 import { ICompiledAd } from "@djonnyx/tornado-types/dist/interfaces/ICompiledAd";
 import { ICompiledAdContents } from "@djonnyx/tornado-types/dist/interfaces/ICompiledAdContents";
+
+const IMAGE_PATTERN = /(Image|image)/;
 
 export class MenuBuilder {
     private _rootNode: INode;
@@ -19,6 +21,7 @@ export class MenuBuilder {
     private _selectorsDictionary: { [id: string]: ISelector };
     private _productsDictionary: { [id: string]: IProduct };
     private _tagsDictionary: { [id: string]: ITag };
+    private _systemTagsDictionary: { [id: string]: ISystemTag };
     private _currenciesDictionary: { [id: string]: ICurrency };
     private _businessPeriodsDictionary: { [id: string]: IBusinessPeriod };
     private _orderTypesDictionary: { [id: string]: IOrderType };
@@ -142,6 +145,12 @@ export class MenuBuilder {
             });
         }
 
+        if (!!refs.systemTags) {
+            refs.systemTags.forEach(systemTag => {
+                this._systemTagsDictionary[systemTag.id] = systemTag;
+            });
+        }
+
         if (!!refs.currencies) {
             let firstCurrency: ICurrency;
             refs.currencies.forEach(currency => {
@@ -232,9 +241,12 @@ export class MenuBuilder {
             // Привязка структур продуктов
             this._compiledProducts.forEach(product => {
                 const baseProduct = this._productsDictionary[product.id];
-                const jointNode = this._nodesDictionary[baseProduct.joint];
-                if (!!jointNode) {
-                    product.structure = this.buildMenuTree(jointNode);
+
+                if (!!baseProduct) {
+                    const jointNode = this._nodesDictionary[baseProduct.joint];
+                    if (!!jointNode) {
+                        product.structure = this.buildMenuTree(jointNode);
+                    }
                 }
             });
         }
@@ -267,6 +279,12 @@ export class MenuBuilder {
 
         if (!!refs.ads) {
             this._compiledAds = refs.ads.filter(v => !!v && v.active).map(v => this.getCompiledAd(v.id));
+        }
+
+        if (!!refs.themes) {
+            refs.themes.forEach(theme => {
+                this.fillThemeAssets(theme, this._assetsDictionary);
+            });
         }
     }
 
@@ -330,11 +348,14 @@ export class MenuBuilder {
                         }
                         case NodeTypes.PRODUCT: {
                             const baseProduct = this._productsDictionary[c.contentId];
-                            const jointNode = this._nodesDictionary[baseProduct.joint];
-                            if (!!jointNode) {
-                                n = { ...c, scenarios: [...(jointNode.scenarios || []), ...(c.scenarios || [])] };
-                            } else {
-                                n = c;
+
+                            if (!!baseProduct) {
+                                const jointNode = this._nodesDictionary[baseProduct.joint];
+                                if (!!jointNode) {
+                                    n = { ...c, scenarios: [...(jointNode.scenarios || []), ...(c.scenarios || [])] };
+                                } else {
+                                    n = c;
+                                }
                             }
                             break;
                         }
@@ -461,6 +482,8 @@ export class MenuBuilder {
                 tags,
                 minPrices: {},
                 structure: undefined,
+                weight: product.weight,
+                systemTag: this._systemTagsDictionary?.[product.systemTag],
                 extra: product.extra,
             };
         }
@@ -554,6 +577,27 @@ export class MenuBuilder {
         return null;
     }
 
+    private fillThemeAssets(theme: Object, assets: { [key: string]: IAsset }): void {
+        if (!theme || !assets) {
+            return;
+        }
+
+        for (let prop in theme) {
+            if (!theme[prop]) {
+                continue;
+            }
+
+            if (IMAGE_PATTERN.test(prop)) {
+                const assetId = theme[prop].assetId;
+                theme[prop].asset = assets?.[assetId];
+            } else {
+                if (typeof theme[prop] !== "string" && theme[prop] !== "number" && theme[prop] !== "boolean") {
+                    this.fillThemeAssets(theme[prop], assets);
+                }
+            }
+        }
+    }
+
     private reset(): void {
         // параметры
         this._rootNode = null;
@@ -567,6 +611,7 @@ export class MenuBuilder {
         this._compiledProducts = [];
 
         // словари
+        this._systemTagsDictionary = {};
         this._adsDictionary = {};
         this._languagesDictionary = {};
         this._translationsDictionary = {};
@@ -602,6 +647,7 @@ export class MenuBuilder {
         this._compiledSelectors = null;
         this._compiledProducts = null;
 
+        this._systemTagsDictionary = null;
         this._adsDictionary = null;
         this._languagesDictionary = null;
         this._translationsDictionary = null;

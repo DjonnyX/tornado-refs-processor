@@ -1,5 +1,5 @@
 import { ICompiledMenu, NodeTypes, SelectorTypes } from "@djonnyx/tornado-types";
-import { ASSETS_DATA, CURRENCIES_DATA, LANGUAGES_DATA } from "../TestDataSimpleMenuService";
+import { ASSETS_DATA, CURRENCIES_DATA, LANGUAGES_DATA, SYSTEM_TAGS_DATA } from "../TestDataSimpleMenuService";
 
 export const MAIN_MENU_REF: ICompiledMenu = {
     "id": "n1",
@@ -305,6 +305,8 @@ export const MAIN_MENU_REF: ICompiledMenu = {
                                             ],
                                             "minPrices": {},
                                             "structure": undefined,
+                                            "weight": 100,
+                                            "systemTag": SYSTEM_TAGS_DATA[0],
                                             "extra": {
                                                 "key": "value"
                                             }
@@ -327,6 +329,8 @@ export const MAIN_MENU_REF: ICompiledMenu = {
                             "key": "value"
                         },
                     },
+                    "weight": 100,
+                    "systemTag": SYSTEM_TAGS_DATA[0],
                     "extra": {
                         "key": "value"
                     },
@@ -420,6 +424,8 @@ export const MAIN_MENU_REF: ICompiledMenu = {
                     ],
                     "minPrices": {},
                     "structure": undefined,
+                    "weight": 100,
+                    "systemTag": SYSTEM_TAGS_DATA[0],
                     "extra": {
                         "key": "value"
                     }

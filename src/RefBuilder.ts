@@ -34,6 +34,7 @@ export class RefBuilder<T = AppTheme> {
         currencies: null,
         ads: null,
         themes: null,
+        systemTags: null,
     };
 
     private _onChange = new Subject<IRefs<T> | null>();
@@ -153,11 +154,14 @@ export class RefBuilder<T = AppTheme> {
                 case "order-types":
                     refName = "orderTypes";
                     break;
+                case "system-tags":
+                    refName = "systemTags";
+                    break;
                 default:
                     refName = refInfo.name;
             }
 
-            if (/^(languages|translations|nodes|products|selectors|tags|assets|stores|terminals|businessPeriods|orderTypes|currencies|ads|themes)$/.test(refName)) {
+            if (/^(languages|translations|nodes|products|selectors|tags|assets|stores|terminals|businessPeriods|orderTypes|currencies|ads|themes|systemTags)$/.test(refName)) {
                 if (!this._refsInfoDictionary[refName] || this._refsInfoDictionary[refName].version !== refInfo.version) {
                     const res = this.updateRefByName(refName);
                     sequenceList.push(res);
@@ -258,6 +262,8 @@ export class RefBuilder<T = AppTheme> {
                 return this._service.getTerminals();
             case "themes":
                 return this._service.getThemes();
+            case "systemTags":
+                return this._service.getSystemTags();
         }
 
         return null;

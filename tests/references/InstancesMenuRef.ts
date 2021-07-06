@@ -88,6 +88,8 @@ export const INSTANCES_MENU_REF: ICompiledMenu = {
                                 "key": "value"
                             },
                         },
+                        "systemTag": undefined,
+                        "weight": 100,
                         "extra": {
                             "key": "value"
                         },
@@ -182,6 +184,8 @@ export const INSTANCES_MENU_REF: ICompiledMenu = {
                                 "key": "value"
                             },
                         },
+                        "systemTag": undefined,
+                        "weight": 100,
                         "extra": {
                             "key": "value"
                         },
