@@ -289,7 +289,11 @@ export class MenuBuilder {
     }
 
     private buildMenuTree(rootNode: INode): ICompiledMenu {
-        return this.buildNode(rootNode, this._nodesDictionary);
+        const menu = this.buildNode(rootNode, this._nodesDictionary);
+
+        // this.setupParentNodes(menu, this._compiledNodesDictionary);
+
+        return menu;
     }
 
     private setupParentNodes(node: ICompiledMenuNode, dictionary: { [id: string]: ICompiledMenuNode }): void {
@@ -344,11 +348,14 @@ export class MenuBuilder {
                         }
                         case NodeTypes.PRODUCT: {
                             const baseProduct = this._productsDictionary[c.contentId];
-                            const jointNode = this._nodesDictionary[baseProduct.joint];
-                            if (!!jointNode) {
-                                n = { ...c, scenarios: [...(jointNode.scenarios || []), ...(c.scenarios || [])] };
-                            } else {
-                                n = c;
+
+                            if (!!baseProduct) {
+                                const jointNode = this._nodesDictionary[baseProduct.joint];
+                                if (!!jointNode) {
+                                    n = { ...c, scenarios: [...(jointNode.scenarios || []), ...(c.scenarios || [])] };
+                                } else {
+                                    n = c;
+                                }
                             }
                             break;
                         }
