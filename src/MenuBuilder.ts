@@ -9,6 +9,8 @@ import { ICompiledTranslation } from "@djonnyx/tornado-types/dist/interfaces/ICo
 import { ICompiledAd } from "@djonnyx/tornado-types/dist/interfaces/ICompiledAd";
 import { ICompiledAdContents } from "@djonnyx/tornado-types/dist/interfaces/ICompiledAdContents";
 
+const IMAGE_PATTERN = /(Image|image)/;
+
 export class MenuBuilder {
     private _rootNode: INode;
     private _languagesDictionary: { [languageCode: string]: ILanguage };
@@ -275,14 +277,16 @@ export class MenuBuilder {
         if (!!refs.ads) {
             this._compiledAds = refs.ads.filter(v => !!v && v.active).map(v => this.getCompiledAd(v.id));
         }
+
+        if (!!refs.themes) {
+            refs.themes.forEach(theme => {
+                this.fillThemeAssets(theme, this._assetsDictionary);
+            });
+        }
     }
 
     private buildMenuTree(rootNode: INode): ICompiledMenu {
-        const menu = this.buildNode(rootNode, this._nodesDictionary);
-
-        // this.setupParentNodes(menu, this._compiledNodesDictionary);
-
-        return menu;
+        return this.buildNode(rootNode, this._nodesDictionary);
     }
 
     private setupParentNodes(node: ICompiledMenuNode, dictionary: { [id: string]: ICompiledMenuNode }): void {
@@ -561,6 +565,27 @@ export class MenuBuilder {
         }
 
         return null;
+    }
+
+    private fillThemeAssets(theme: Object, assets: { [key: string]: IAsset }): void {
+        if (!theme || !assets) {
+            return;
+        }
+
+        for (let prop in theme) {
+            if (!theme[prop]) {
+                continue;
+            }
+
+            if (IMAGE_PATTERN.test(prop)) {
+                const assetId = theme[prop].assetId;
+                theme[prop].asset = assets?.[assetId];
+            } else {
+                if (typeof theme[prop] !== "string" && theme[prop] !== "number" && theme[prop] !== "boolean") {
+                    this.fillThemeAssets(theme[prop], assets);
+                }
+            }
+        }
     }
 
     private reset(): void {
