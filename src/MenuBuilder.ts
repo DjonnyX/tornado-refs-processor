@@ -241,9 +241,12 @@ export class MenuBuilder {
             // Привязка структур продуктов
             this._compiledProducts.forEach(product => {
                 const baseProduct = this._productsDictionary[product.id];
-                const jointNode = this._nodesDictionary[baseProduct.joint];
-                if (!!jointNode) {
-                    product.structure = this.buildMenuTree(jointNode);
+
+                if (!!baseProduct) {
+                    const jointNode = this._nodesDictionary[baseProduct.joint];
+                    if (!!jointNode) {
+                        product.structure = this.buildMenuTree(jointNode);
+                    }
                 }
             });
         }
