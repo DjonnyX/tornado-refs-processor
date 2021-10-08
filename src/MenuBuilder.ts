@@ -352,6 +352,9 @@ export class MenuBuilder {
                             if (!!baseProduct) {
                                 const jointNode = this._nodesDictionary[baseProduct.joint];
                                 if (!!jointNode) {
+                                    if (!this.getIsStoreContain(jointNode)) {
+                                        continue;
+                                    }
                                     n = { ...c, scenarios: [...(jointNode.scenarios || []), ...(c.scenarios || [])] };
                                 } else {
                                     n = c;
