@@ -1,7 +1,7 @@
 import {
     INode, IAsset, ISelector, IProduct, ITag, IRefs, NodeTypes, ICurrency, ITranslation, ILanguage,
     IBusinessPeriod, IOrderType, IStore, ITerminal, ICompiledMenu, ICompiledMenuNode, ICompiledSelector,
-    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents, ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes, IScenario, ISystemTag
+    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents, ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes, IScenario, ISystemTag, IAppTheme, ICompiledAppTheme
 } from "@djonnyx/tornado-types";
 import { getCompiledContents } from "./utils/getCompiledContents";
 import { ICompiledEntityContents } from "@djonnyx/tornado-types/dist/interfaces/ICompiledEntityContents";
@@ -283,7 +283,7 @@ export class MenuBuilder {
 
         if (!!refs.themes) {
             refs.themes.forEach(theme => {
-                this.fillThemeAssets(theme, this._assetsDictionary);
+                this.fillThemeAssets(theme.data, this._assetsDictionary, theme.resources);
             });
         }
     }
@@ -580,22 +580,21 @@ export class MenuBuilder {
         return null;
     }
 
-    private fillThemeAssets(theme: Object, assets: { [key: string]: IAsset }): void {
-        if (!theme || !assets) {
+    private fillThemeAssets(props: { [propName: string]: any }, assets: { [key: string]: IAsset }, resources: { [key: string]: string }, lastProp?: string): void {
+        if (!props || !assets) {
             return;
         }
 
-        for (let prop in theme) {
-            if (!theme[prop]) {
-                continue;
-            }
+        for (const prop in props) {
+            const actualPropName = !!lastProp ? `${lastProp}.${prop}` : prop;
 
             if (IMAGE_PATTERN.test(prop)) {
-                const assetId = theme[prop].assetId;
-                theme[prop].asset = assets?.[assetId];
+                const assetId = resources[actualPropName];
+                const asset = assets?.[assetId];
+                props[prop] = { asset };
             } else {
-                if (typeof theme[prop] !== "string" && theme[prop] !== "number" && theme[prop] !== "boolean") {
-                    this.fillThemeAssets(theme[prop], assets);
+                if (typeof props[prop] !== "string" && props[prop] !== "number" && props[prop] !== "boolean") {
+                    this.fillThemeAssets(props[prop], assets, resources, actualPropName);
                 }
             }
         }
