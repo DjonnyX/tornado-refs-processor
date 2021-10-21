@@ -169,6 +169,7 @@ export const M1_SELECTORS_DATA: Array<ISelector> = [
                 assets: ["a1", "a2"],
             }
         },
+        systemTag: null,
         extra: { key: "value" },
     },
 ];
