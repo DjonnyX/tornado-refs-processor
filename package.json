@@ -33,7 +33,7 @@
     "typings": "^2.1.1"
   },
   "dependencies": {
-    "@djonnyx/tornado-types": "1.4.97",
+    "@djonnyx/tornado-types": "1.5.9",
     "rxjs": "^6.6.0"
   }
 }
