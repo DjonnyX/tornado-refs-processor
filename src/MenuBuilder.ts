@@ -249,12 +249,12 @@ export class MenuBuilder {
                     const jointNode = this._nodesDictionary[baseProduct.joint];
                     if (!!jointNode) {
                         for (const childId of jointNode.children) {
-                            const child = this._nodesDictionary[childId];
-                            const selector = this._selectorsDictionary[child.contentId];
-                            if (!!selector && selector.type === SelectorTypes.SCHEMA_GROUP_CATEGORY) {
-                                const selectorJointNode = this._nodesDictionary[selector.joint];
-                                if (!!selectorJointNode) {
-                                    baseProductChildren.push(...(selectorJointNode.children || []));
+                            const childNode = this._nodesDictionary[childId];
+                            if (childNode.type === NodeTypes.SELECTOR_NODE) {
+                                const selectorNode = this._nodesDictionary[childNode?.contentId];
+                                const selector = this._selectorsDictionary[selectorNode.contentId];
+                                if (selector.type === SelectorTypes.SCHEMA_GROUP_CATEGORY) {
+                                    baseProductChildren.push(...selectorNode.children);
                                 }
                             } else {
                                 baseProductChildren.push(childId);
