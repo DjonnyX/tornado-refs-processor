@@ -1,7 +1,9 @@
 import {
     INode, IAsset, ISelector, IProduct, ITag, IRefs, NodeTypes, ICurrency, ITranslation, ILanguage,
     IBusinessPeriod, IOrderType, IStore, ITerminal, ICompiledMenu, ICompiledMenuNode, ICompiledSelector,
-    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents, ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes, IScenario, ISystemTag, IAppTheme, ICompiledAppTheme
+    ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents,
+    ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes, IScenario,
+    ISystemTag, IAppTheme, ICompiledAppTheme, SelectorTypes,
 } from "@djonnyx/tornado-types";
 import { getCompiledContents } from "./utils/getCompiledContents";
 import { ICompiledEntityContents } from "@djonnyx/tornado-types/dist/interfaces/ICompiledEntityContents";
@@ -243,7 +245,21 @@ export class MenuBuilder {
                 const baseProduct = this._productsDictionary[product.id];
 
                 if (!!baseProduct) {
+                    const baseProductChildren = new Array<string>();
                     const jointNode = this._nodesDictionary[baseProduct.joint];
+                    for (const childId of jointNode.children) {
+                        const child = this._nodesDictionary[childId];
+                        const selector = this._selectorsDictionary[child.contentId];
+                        if (!!selector && selector.type === SelectorTypes.SCHEMA_GROUP_CATEGORY) {
+                            const selectorJointNode = this._nodesDictionary[selector.joint];
+                            if (!!selectorJointNode) {
+                                baseProductChildren.push(...(selectorJointNode.children || []));
+                            }
+                        } else {
+                            baseProductChildren.push(childId);
+                        }
+                    }
+                    jointNode.children = baseProductChildren;
                     if (!!jointNode) {
                         product.structure = this.buildMenuTree(jointNode);
                     }
