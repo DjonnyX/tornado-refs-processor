@@ -250,14 +250,16 @@ export class MenuBuilder {
                     if (!!jointNode) {
                         for (const childId of jointNode.children) {
                             const childNode = this._nodesDictionary[childId];
-                            if (childNode.type === NodeTypes.SELECTOR_NODE) {
+                            if (childNode?.type === NodeTypes.SELECTOR_NODE) {
                                 const selectorNode = this._nodesDictionary[childNode?.contentId];
                                 const selector = this._selectorsDictionary[selectorNode.contentId];
-                                if (selector.type === SelectorTypes.SCHEMA_GROUP_CATEGORY) {
+                                if (selector?.type === SelectorTypes.SCHEMA_GROUP_CATEGORY) {
                                     baseProductChildren.push(...selectorNode.children);
                                 } else {
                                     baseProductChildren.push(childId);
                                 }
+                            } else {
+                                baseProductChildren.push(childId);
                             }
                         }
                         jointNode.children = baseProductChildren;
