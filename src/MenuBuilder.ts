@@ -247,20 +247,20 @@ export class MenuBuilder {
                 if (!!baseProduct) {
                     const baseProductChildren = new Array<string>();
                     const jointNode = this._nodesDictionary[baseProduct.joint];
-                    for (const childId of jointNode.children) {
-                        const child = this._nodesDictionary[childId];
-                        const selector = this._selectorsDictionary[child.contentId];
-                        if (!!selector && selector.type === SelectorTypes.SCHEMA_GROUP_CATEGORY) {
-                            const selectorJointNode = this._nodesDictionary[selector.joint];
-                            if (!!selectorJointNode) {
-                                baseProductChildren.push(...(selectorJointNode.children || []));
-                            }
-                        } else {
-                            baseProductChildren.push(childId);
-                        }
-                    }
-                    jointNode.children = baseProductChildren;
                     if (!!jointNode) {
+                        for (const childId of jointNode.children) {
+                            const child = this._nodesDictionary[childId];
+                            const selector = this._selectorsDictionary[child.contentId];
+                            if (!!selector && selector.type === SelectorTypes.SCHEMA_GROUP_CATEGORY) {
+                                const selectorJointNode = this._nodesDictionary[selector.joint];
+                                if (!!selectorJointNode) {
+                                    baseProductChildren.push(...(selectorJointNode.children || []));
+                                }
+                            } else {
+                                baseProductChildren.push(childId);
+                            }
+                        }
+                        jointNode.children = baseProductChildren;
                         product.structure = this.buildMenuTree(jointNode);
                     }
                 }
