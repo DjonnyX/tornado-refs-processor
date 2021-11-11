@@ -1,6 +1,6 @@
 {
   "name": "@djonnyx/tornado-refs-processor",
-  "version": "1.2.32",
+  "version": "1.2.33",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
