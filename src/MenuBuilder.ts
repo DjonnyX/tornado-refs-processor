@@ -3,7 +3,7 @@ import {
     IBusinessPeriod, IOrderType, IStore, ITerminal, ICompiledMenu, ICompiledMenuNode, ICompiledSelector,
     ICompiledProduct, ICompiledProductContents, ICompiledSelectorContents, ICompiledTag, ICompiledTagContents,
     ICompiledLanguage, ICompiledOrderType, ICompiledOrderTypeContents, IAd, ScenarioCommonActionTypes, IScenario,
-    ISystemTag, IAppTheme, ICompiledAppTheme, SelectorTypes,
+    ISystemTag, IAppTheme, ICompiledAppTheme, SelectorTypes, IWeightUnit,
 } from "@djonnyx/tornado-types";
 import { getCompiledContents } from "./utils/getCompiledContents";
 import { ICompiledEntityContents } from "@djonnyx/tornado-types/dist/interfaces/ICompiledEntityContents";
@@ -29,6 +29,7 @@ export class MenuBuilder {
     private _orderTypesDictionary: { [id: string]: IOrderType };
     private _storesDictionary: { [id: string]: IStore };
     private _terminalsDictionary: { [id: string]: ITerminal };
+    private _weightUnitsDictionary: { [id: string]: IWeightUnit };
 
     private _compiledNodesDictionary: { [id: string]: ICompiledMenuNode };
 
@@ -218,6 +219,12 @@ export class MenuBuilder {
         if (!!refs.terminals) {
             refs.terminals.forEach(terminal => {
                 this._terminalsDictionary[terminal.id] = terminal;
+            });
+        }
+
+        if (!!refs.weightUnits) {
+            refs.weightUnits.forEach(weightUnit => {
+                this._weightUnitsDictionary[weightUnit.id] = weightUnit;
             });
         }
 
@@ -504,6 +511,7 @@ export class MenuBuilder {
                 minPrices: {},
                 structure: undefined,
                 weight: product.weight,
+                weightUnit: this._weightUnitsDictionary?.[product.weightUnitId],
                 systemTag: this._systemTagsDictionary?.[product.systemTag],
                 extra: product.extra,
             };

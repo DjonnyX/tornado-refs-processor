@@ -35,6 +35,7 @@ export class RefBuilder<T = AppTheme> {
         ads: null,
         themes: null,
         systemTags: null,
+        weightUnits: null,
     };
 
     private _onChange = new Subject<IRefs<T> | null>();
@@ -157,11 +158,14 @@ export class RefBuilder<T = AppTheme> {
                 case "system-tags":
                     refName = "systemTags";
                     break;
+                case "weight-units":
+                    refName = "weightUnits";
+                    break;
                 default:
                     refName = refInfo.name;
             }
 
-            if (/^(languages|translations|nodes|products|selectors|tags|assets|stores|terminals|businessPeriods|orderTypes|currencies|ads|themes|systemTags)$/.test(refName)) {
+            if (/^(languages|translations|nodes|products|selectors|tags|assets|stores|terminals|businessPeriods|orderTypes|currencies|ads|themes|systemTags|weightUnits)$/.test(refName)) {
                 if (!this._refsInfoDictionary[refName] || this._refsInfoDictionary[refName].version !== refInfo.version) {
                     const res = this.updateRefByName(refName);
                     sequenceList.push(res);
@@ -264,6 +268,8 @@ export class RefBuilder<T = AppTheme> {
                 return this._service.getThemes();
             case "systemTags":
                 return this._service.getSystemTags();
+            case "weightUnits":
+                return this._service.getWeightUnits();
         }
 
         return null;

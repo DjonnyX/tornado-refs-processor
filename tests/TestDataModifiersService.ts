@@ -1,7 +1,7 @@
 import { Observable, of, interval } from "rxjs";
 import {
     IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes, ITranslation,
-    IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, RefTypes, ISystemTag
+    IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, RefTypes, ISystemTag, IWeightUnit
 } from "@djonnyx/tornado-types";
 import { take, switchMap } from "rxjs/operators";
 
@@ -80,6 +80,11 @@ export const M_REFS_INFO_DATA: Array<IRef> = [
     },
     {
         name: RefTypes.SYSTEM_TAGS,
+        version: 1,
+        lastUpdate: currentTestDate,
+    },
+    {
+        name: RefTypes.WEIGHT_UNITS,
         version: 1,
         lastUpdate: currentTestDate,
     },
@@ -231,6 +236,7 @@ export const M_PRODUCTS_DATA: Array<IProduct> = [
         joint: "j1",
         systemTag: undefined,
         weight: 100,
+        weightUnitId: undefined,
     },
     {
         id: "p3",
@@ -258,6 +264,7 @@ export const M_PRODUCTS_DATA: Array<IProduct> = [
         joint: "j3",
         systemTag: undefined,
         weight: 100,
+        weightUnitId: undefined,
     },
     {
         id: "p2",
@@ -284,6 +291,7 @@ export const M_PRODUCTS_DATA: Array<IProduct> = [
         receipt: [],
         systemTag: undefined,
         weight: 100,
+        weightUnitId: undefined,
     },
 ];
 
@@ -347,6 +355,8 @@ export const M_TERMINALS_DATA: Array<ITerminal> = [];
 export const M_THEMES_DATA: Array<any> = [];
 
 export const M_SYSTEM_TAGS_DATA: Array<ISystemTag> = [];
+
+export const M_WEIGHT_UNITS_DATA: Array<IWeightUnit> = [];
 
 const request = (data: any) => {
     return interval(100).pipe(
@@ -418,5 +428,9 @@ export class TestDataModifiersService<T = any> {
 
     getSystemTags(): Observable<Array<ISystemTag>> {
         return request(M_SYSTEM_TAGS_DATA);
+    }
+
+    getWeightUnits(): Observable<Array<IWeightUnit>> {
+        return request(M_WEIGHT_UNITS_DATA);
     }
 }

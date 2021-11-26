@@ -119,6 +119,7 @@ export const MODIFIERS_MENU_REF: ICompiledMenu = {
                                         "structure": undefined,
                                         "systemTag": undefined,
                                         "weight": 100,
+                                        "weightUnit": undefined,
                                         "extra": {
                                             "key": "value"
                                         }
@@ -143,6 +144,7 @@ export const MODIFIERS_MENU_REF: ICompiledMenu = {
                 },
                 "systemTag": undefined,
                 "weight": 100,
+                "weightUnit": undefined,
                 "extra": {
                     "key": "value"
                 },
@@ -262,6 +264,7 @@ export const MODIFIERS_MENU_REF: ICompiledMenu = {
                                         "structure": undefined,
                                         "systemTag": undefined,
                                         "weight": 100,
+                                        "weightUnit": undefined,
                                         "extra": {
                                             "key": "value"
                                         }
@@ -286,6 +289,7 @@ export const MODIFIERS_MENU_REF: ICompiledMenu = {
                 },
                 "systemTag": undefined,
                 "weight": 100,
+                "weightUnit": undefined,
                 "extra": {
                     "key": "value"
                 },

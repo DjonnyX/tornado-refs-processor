@@ -306,6 +306,7 @@ export const MAIN_MENU_REF: ICompiledMenu = {
                                             "minPrices": {},
                                             "structure": undefined,
                                             "weight": 100,
+                                            "weightUnit": undefined,
                                             "systemTag": SYSTEM_TAGS_DATA[0],
                                             "extra": {
                                                 "key": "value"
@@ -330,6 +331,7 @@ export const MAIN_MENU_REF: ICompiledMenu = {
                         },
                     },
                     "weight": 100,
+                    "weightUnit": undefined,
                     "systemTag": SYSTEM_TAGS_DATA[0],
                     "extra": {
                         "key": "value"
@@ -425,6 +427,7 @@ export const MAIN_MENU_REF: ICompiledMenu = {
                     "minPrices": {},
                     "structure": undefined,
                     "weight": 100,
+                    "weightUnit": undefined,
                     "systemTag": SYSTEM_TAGS_DATA[0],
                     "extra": {
                         "key": "value"

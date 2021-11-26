@@ -3,7 +3,7 @@ import { take, switchMap } from "rxjs/operators";
 import {
     IRef, INode, NodeTypes, ISelector, IProduct, ITag, IAsset, ILanguage, SelectorTypes,
     ITranslation, IBusinessPeriod, IOrderType, ICurrency, IAd, IStore, ITerminal, AdTypes,
-    TerminalStatusTypes, TerminalTypes, RefTypes, IKioskTheme, IKioskThemeData, ISystemTag
+    TerminalStatusTypes, TerminalTypes, RefTypes, IKioskTheme, IKioskThemeData, ISystemTag, IWeightUnit
 } from "@djonnyx/tornado-types";
 
 const currentTestDate = new Date("2020-09-11T11:18:11.284Z");
@@ -81,6 +81,11 @@ export const REFS_INFO_DATA: Array<IRef> = [
     },
     {
         name: RefTypes.SYSTEM_TAGS,
+        version: 1,
+        lastUpdate: currentTestDate,
+    },
+    {
+        name: RefTypes.WEIGHT_UNITS,
         version: 1,
         lastUpdate: currentTestDate,
     },
@@ -280,6 +285,7 @@ export const PRODUCTS_DATA: Array<IProduct> = [
         tags: ["t1", "t2"],
         systemTag: "st1",
         weight: 100,
+        weightUnitId: undefined,
         receipt: [],
         joint: "j1",
     },
@@ -305,6 +311,7 @@ export const PRODUCTS_DATA: Array<IProduct> = [
         }],
         systemTag: "st1",
         weight: 100,
+        weightUnitId: undefined,
         extra: { key: "value" },
         tags: ["t3"],
         receipt: [],
@@ -331,6 +338,7 @@ export const PRODUCTS_DATA: Array<IProduct> = [
         }],
         systemTag: "st1",
         weight: 100,
+        weightUnitId: undefined,
         extra: { key: "value" },
         tags: ["t3"],
         receipt: [],
@@ -593,6 +601,8 @@ export const SYSTEM_TAGS_DATA: Array<ISystemTag> = [
     },
 ]
 
+export const WEIGHT_UNITS_DATA: Array<IWeightUnit> = [];
+
 const request = (data: any) => {
     return interval(100).pipe(
         take(1),
@@ -663,5 +673,9 @@ export class TestDataSimpleMenuService<T = any> {
 
     getSystemTags(): Observable<Array<ISystemTag>> {
         return request(SYSTEM_TAGS_DATA);
+    }
+
+    getWeightUnits(): Observable<Array<IWeightUnit>> {
+        return request(WEIGHT_UNITS_DATA);
     }
 }

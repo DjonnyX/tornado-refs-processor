@@ -85,6 +85,7 @@ describe('DataCombiner', () => {
                     RefTypes.ADS,
                     RefTypes.THEMES,
                     RefTypes.SYSTEM_TAGS,
+                    RefTypes.WEIGHT_UNITS,
                 ]
             });
         });
@@ -164,6 +165,7 @@ describe('DataCombiner', () => {
                     RefTypes.ADS,
                     RefTypes.THEMES,
                     RefTypes.SYSTEM_TAGS,
+                    RefTypes.WEIGHT_UNITS,
                 ]
             });
         });
@@ -243,6 +245,7 @@ describe('DataCombiner', () => {
                     RefTypes.ADS,
                     RefTypes.THEMES,
                     RefTypes.SYSTEM_TAGS,
+                    RefTypes.WEIGHT_UNITS,
                 ]
             });
         });
@@ -322,6 +325,7 @@ describe('DataCombiner', () => {
                     RefTypes.ADS,
                     RefTypes.THEMES,
                     RefTypes.SYSTEM_TAGS,
+                    RefTypes.WEIGHT_UNITS,
                 ]
             });
         });
@@ -403,6 +407,7 @@ describe('DataCombiner', () => {
                     RefTypes.ADS,
                     RefTypes.THEMES,
                     RefTypes.SYSTEM_TAGS,
+                    RefTypes.WEIGHT_UNITS,
                 ]
             });
         });
