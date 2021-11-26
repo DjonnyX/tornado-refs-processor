@@ -653,6 +653,7 @@ export class MenuBuilder {
         this._orderTypesDictionary = {};
         this._storesDictionary = {};
         this._terminalsDictionary = {};
+        this._weightUnitsDictionary = {};
 
         this._compiledNodesDictionary = {}
 
@@ -689,6 +690,7 @@ export class MenuBuilder {
         this._orderTypesDictionary = null;
         this._storesDictionary = null;
         this._terminalsDictionary = null;
+        this._weightUnitsDictionary = null;
 
         this._compiledNodesDictionary = null;
 
